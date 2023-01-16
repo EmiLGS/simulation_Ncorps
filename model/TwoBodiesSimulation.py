@@ -1,5 +1,5 @@
 import numpy as np
-from Body import Body
+from model.Body import Body
 
 class TwoBodiesSimulation():
 
