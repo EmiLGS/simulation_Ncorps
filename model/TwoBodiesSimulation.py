@@ -5,14 +5,19 @@ class TwoBodiesSimulation():
 
     g = 9.81
 
-    def __init__(self,body1=None,body2=None):
-        self.body1 = body1 if body1 else Body(300,300)
-        self.body2 = body2 if body2 else Body(600,200)
+    def __init__(self, body1 = None, body2 = None):
+        self.body1 = body1 if body1 else Body( 300, 300 )
+        self.body2 = body2 if body2 else Body( 600, 200 )
         self.body1.spd = np.array([0.0,1.1])
         self.body2.spd = np.array([0.0,-1.1])
 
-    def advance(self):
+    def getFirstBody(self):
+        return self.body1
 
+    def getSecondBody(self):
+        return self.body2
+
+    def advance(self):
         #Get distance between 2 bodies
         a = self.body2.pos[0] - self.body1.pos[0]
         b = self.body2.pos[1] - self.body1.pos[1]
