@@ -1,26 +1,36 @@
 import time
 import pygame, sys
-from model.TwoBodiesSimulation import TwoBodiesSimulation
-from controller.BodySimulationController import BodySimulationController
 
-class ViewTestPygame:
+from controller.BodySimulationController import BodySimulationController
+from model.TwoBodiesSimulation import TwoBodiesSimulation
+
+class ViewTestPygame():
     def __init__(self):
         pygame.init()
 
+        # Polices
         pygame.font.init()
         self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
+        pygame.font.get_fonts()
 
-        pygame.display.set_caption('Quick Start')
-        self.window_surface = pygame.display.set_mode((1200, 800))
+        # Parametre de la fenetre
+        self.width = 1200
+        self.height = 800
 
+        pygame.display.set_caption('Ncorps')
+        self.window_surface = pygame.display.set_mode((self.width, self.height))
         self.background = pygame.Surface((1200, 800))
         self.background.fill(pygame.Color('#BBBBBB'))
 
+        # Boucles pour les ecrans
         self.run_menu = True
         self.run_simulation = False
+        self.run_notice = False
 
-        self.box_idle = pygame.transform.scale(pygame.image.load("view/red_button11.png"),(380,98))
-        self.box_pressed = pygame.transform.scale(pygame.image.load("view/red_button12.png"),(380, 98))
+        # Charger les images
+        self.button_dim = (380,98)
+        self.box_idle = pygame.transform.scale(pygame.image.load("view/red_button11.png"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed = pygame.transform.scale(pygame.image.load("view/red_button12.png"),(self.button_dim[0], self.button_dim[1]))
 
     def menu(self):
 
@@ -37,34 +47,35 @@ class ViewTestPygame:
             self.window_surface.blit(self.background,(0,0))
 
             # Zones d'interactions si souris passe sur les boutons
-            rect_jouer = pygame.Rect(350, 275, 380, 98)
-            rect_level = pygame.Rect(350, 390, 380, 98)
-            rect_quitter = pygame.Rect(350, 510, 380, 98)
+            self.button_posX = (self.width/2)-(self.button_dim[0]/2)
+            rect_jouer = pygame.Rect(self.button_posX, 275, self.button_dim[0], 98)
+            rect_notice = pygame.Rect(self.button_posX, 390, self.button_dim[0], 98)
+            rect_quitter = pygame.Rect(self.button_posX, 510, self.button_dim[0], 98)
 
             # Animations quand souris passe sur les boutons
             # Bouton Jouer
             if not rect_jouer.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (350, 275))
-                self.window_surface.blit(Jouer, (460, 300))
+                self.window_surface.blit(self.box_idle, (self.button_posX, 275))
+                self.window_surface.blit(Jouer, (550, 300))
             else:
-                self.window_surface.blit(self.box_idle, (350, 285))
-                self.window_surface.blit(Jouer, (460, 310))
+                self.window_surface.blit(self.box_idle, (self.button_posX, 285))
+                self.window_surface.blit(Jouer, (550, 310))
 
-             #Bouton Level
-            if not rect_level.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (350, 390))
-                self.window_surface.blit(Level, (460, 420))
+             #Bouton Notice
+            if not rect_notice.collidepoint(mouseX, mouseY):
+                self.window_surface.blit(self.box_idle, (self.button_posX, 390))
+                self.window_surface.blit(Level, (550, 420))
             else:
-                self.window_surface.blit(self.box_idle, (350, 400))
-                self.window_surface.blit(Level, (460, 430))
+                self.window_surface.blit(self.box_idle, (self.button_posX, 400))
+                self.window_surface.blit(Level, (550, 430))
 
             # Bouton Quitter
             if not rect_quitter.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (350, 510))
-                self.window_surface.blit(Quitter, (425, 540))
+                self.window_surface.blit(self.box_idle, (self.button_posX, 510))
+                self.window_surface.blit(Quitter, (540, 540))
             else:
-                self.window_surface.blit(self.box_idle, (350, 520))
-                self.window_surface.blit(Quitter, (425, 550))
+                self.window_surface.blit(self.box_idle, (self.button_posX, 520))
+                self.window_surface.blit(Quitter, (540, 550))
 
             pygame.display.flip()
 
@@ -76,15 +87,43 @@ class ViewTestPygame:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Si clique sur bouton Jouer
                     if rect_jouer.collidepoint((mouseX,mouseY)):
-
-                        # Lancer la transition
+                        # Lancer l'ecran
                         self.run_menu = False
                         self.run_simulation = True
                         self.simulation()
+                    
+                    if rect_notice.collidepoint((mouseX,mouseY)):
+                        # Lancer l'ecran
+                        self.run_menu = False
+                        self.run_notice = True
+                        self.Notice()
 
                     # Si clique sur bouton Quitter
                     if rect_quitter.collidepoint((mouseX,mouseY)):
                         sys.exit()
+
+    def Notice(self):
+        text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
+
+        def display_text(surface, text, pos, font, color):
+            collection = [word.split(' ') for word in text.splitlines()]
+            space = font.size(' ')[0]
+            x,y = pos
+            for lines in collection:
+                for words in lines:
+                    word_surface = font.render(words, True, color)
+                    word_width, word_height = word_surface.get_size()
+                    if x + word_width >= self.width:
+                        x = pos[0]
+                        y += word_height
+                    surface.blit(word_surface, (x,y))
+                    x += word_width + space
+                x = pos[0]
+                y += word_height
+        
+        while self.run_notice:
+            display_text(self.window_surface, text, (50,50), self.my_font, 'black')
+            pygame.display.flip()
 
     def simulation(self):
         # Use simControllerulation specific.
