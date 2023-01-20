@@ -1,4 +1,5 @@
 from view.ViewTestPygame import ViewTestPygame
 
 if __name__ == '__main__':
-    ViewTestPygame()
+    test = ViewTestPygame()
+    test.menu()
