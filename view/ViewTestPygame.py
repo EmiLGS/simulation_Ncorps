@@ -80,7 +80,9 @@ class ViewTestPygame():
             pygame.display.flip()
 
             for event in pygame.event.get():
+                # Quitter
                 if event.type == pygame.QUIT:
+                    self.run_notice = False
                     pygame.quit()
 
                 # Evenements lors du clique
@@ -105,6 +107,7 @@ class ViewTestPygame():
     def Notice(self):
         text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
 
+        # Fonction pour afficher zone de texte
         def display_text(surface, text, pos, font, color):
             collection = [word.split(' ') for word in text.splitlines()]
             space = font.size(' ')[0]
@@ -122,6 +125,13 @@ class ViewTestPygame():
                 y += word_height
         
         while self.run_notice:
+            # Quitter
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.run_notice = False
+                    pygame.quit()
+
+            self.window_surface.blit(self.background, (0, 0))
             display_text(self.window_surface, text, (50,50), self.my_font, 'black')
             pygame.display.flip()
 
