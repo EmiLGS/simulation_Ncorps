@@ -5,10 +5,10 @@ class Body():
         self.pos = np.array([x+0.1,y+0.1])
         self.spd = np.array([0.0,0.0])
         self.acc = np.array([0.0,0.0])
-        self.mass = 10
+        self.mass = 5*10**7
 
     def addForce(self,force):
-        self.acc = force
+        self.acc += force/self.mass
 
     def computeNewPos(self):
 
