@@ -8,11 +8,11 @@ class ThreeBodiesSimulation():
     def __init__(self,body1=None,body2=None,body3=None):
         print(ThreeBodiesSimulation.G)
         self.body1 = body1 if body1 else Body(400,400)
-        self.body2 = body2 if body2 else Body(200,400)
-        self.body3 = body3 if body3 else Body(600,400)
-        self.body1.mass = 10*10**7
-        self.body2.mass = 0.0001
-        self.body3.mass = 0.0001
+        self.body2 = body2 if body2 else Body(200,200)
+        self.body3 = body3 if body3 else Body(600,500)
+        self.body1.mass = -10**9
+        self.body2.mass = -10**9
+        self.body3.mass = -10**9
         vitin = np.sqrt(self.G*self.body1.mass/200)
         self.body2.spd = np.array([0.0,vitin])
         self.body3.spd = np.array([0.0,-vitin])
@@ -29,12 +29,11 @@ class ThreeBodiesSimulation():
         self.body3.computeNewPos()
     
     def computeAllForces(self,body,targetBodies):
-        forces = []
+        body.acc = 0
         for targetBody in targetBodies:
             a = targetBody.pos[0] - body.pos[0]
             b = targetBody.pos[1] - body.pos[1]
             d = np.sqrt(a**2 + b**2)
 
             Vdir = np.array([a,b])
-            forces.append(((self.G*body.mass*targetBody.mass)/(d**3))*Vdir)
-        body.addForce(np.average(forces))
+            body.addForce(((self.G*body.mass*targetBody.mass)/(d**3))*Vdir)
