@@ -11,7 +11,7 @@ class ViewTestPygame():
         # Polices
         pygame.font.init()
         self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
-        self.poppins_font_30 = pygame.font.Font("view/Poppins-regular.ttf", 30)
+        self.poppins_font_30 = pygame.font.Font("view/assets/Poppins-regular.ttf", 30)
         pygame.font.get_fonts()
 
         # Parametre de la fenetre
@@ -30,12 +30,12 @@ class ViewTestPygame():
 
         self.taille_return_icon = 512//11
         self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
-        self.icon_return = pygame.transform.scale(pygame.image.load("view/return.png"),(self.taille_return_icon,self.taille_return_icon))
+        self.icon_return = pygame.transform.scale(pygame.image.load("view/assets/return.png"),(self.taille_return_icon,self.taille_return_icon))
 
         # Charger les images
         self.button_dim = (380,98)
-        self.box_idle = pygame.transform.scale(pygame.image.load("view/button.jpg"),(self.button_dim[0],self.button_dim[1]))
-        self.box_pressed = pygame.transform.scale(pygame.image.load("view/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
+        self.box_idle = pygame.transform.scale(pygame.image.load("view/assets/button.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed = pygame.transform.scale(pygame.image.load("view/assets/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
 
     def menu(self):
 
@@ -59,9 +59,9 @@ class ViewTestPygame():
 
             # Icones boutons
             n = 11
-            self.icon_play = pygame.transform.scale(pygame.image.load("view/bouton-jouer.png"),(512//n,512//n))
-            self.icon_notice = pygame.transform.scale(pygame.image.load("view/livre.png"),(512//n,512//n))
-            self.icon_exit = pygame.transform.scale(pygame.image.load("view/se-deconnecter2.png"),(512//n,512//n))
+            self.icon_play = pygame.transform.scale(pygame.image.load("view/assets/bouton-jouer.png"),(512//n,512//n))
+            self.icon_notice = pygame.transform.scale(pygame.image.load("view/assets/livre.png"),(512//n,512//n))
+            self.icon_exit = pygame.transform.scale(pygame.image.load("view/assets/se-deconnecter2.png"),(512//n,512//n))
            
             # Animations quand souris passe sur les boutons
             # Bouton Jouer
