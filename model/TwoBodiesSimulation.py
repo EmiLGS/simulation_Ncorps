@@ -3,13 +3,16 @@ from model.Body import Body
 
 class TwoBodiesSimulation():
 
-    g = 9.81
+    G = 6.67*10**-11
 
-    def __init__(self, body1 = None, body2 = None):
-        self.body1 = body1 if body1 else Body( 300, 300 )
-        self.body2 = body2 if body2 else Body( 600, 200 )
-        self.body1.spd = np.array([0.0,1.1])
-        self.body2.spd = np.array([0.0,-1.1])
+    def __init__(self,body1=None,body2=None):
+        self.body1 = body1 if body1 else Body(400,400)
+        self.body2 = body2 if body2 else Body(200,400)
+        self.body1.mass = 10*10**11
+        self.body2.mass = 1
+        dist = np.sqrt((self.body1.pos[0] - self.body2.pos[0])**2 + (self.body1.pos[1] - self.body2.pos[1]))
+        vitin = np.sqrt(self.G*self.body1.mass/(dist))
+        self.body2.spd = np.array([0.0,vitin])
 
     def getFirstBody(self):
         return self.body1
@@ -24,7 +27,8 @@ class TwoBodiesSimulation():
         d = np.sqrt(a**2 + b**2)
 
         V12 = np.array([a,b])
-        force = ((self.g*self.body1.mass*self.body2.mass)/(d**3))*V12
+        force = ((self.G*self.body1.mass*self.body2.mass)/(d**3))*V12
+
 
         #Apply force to both bodies
         self.body1.addForce(force)

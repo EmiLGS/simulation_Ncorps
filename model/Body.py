@@ -5,13 +5,15 @@ class Body():
         self.pos = np.array([x+0.1,y+0.1])
         self.spd = np.array([0.0,0.0])
         self.acc = np.array([0.0,0.0])
-        self.mass = 10
+        self.mass = 10**11
 
     def addForce(self,force):
-        self.acc = force
+        self.acc += force/self.mass
 
     def computeNewPos(self):
-
+        accMag = np.sqrt(self.acc[0]**2 + self.acc[1]**2)
+        accMax = 0.1
+        self.acc = self.acc if accMag < accMax else self.acc/accMag * np.array([accMax,accMax])
         #Add acceleration to speed
         self.spd += self.acc
 
