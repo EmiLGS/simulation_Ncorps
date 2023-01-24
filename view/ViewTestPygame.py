@@ -8,13 +8,13 @@ class ViewTestPygame():
     def __init__(self):
         pygame.init()
 
-        # Polices
+        # Fonts
         pygame.font.init()
         self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
         self.poppins_font_30 = pygame.font.Font("view/Poppins-regular.ttf", 30)
         pygame.font.get_fonts()
 
-        # Parametre de la fenetre
+        # Windows parameters
         self.width = 1200
         self.height = 800
 
@@ -23,48 +23,48 @@ class ViewTestPygame():
         self.background = pygame.Surface((1200, 800))
         self.background.fill(pygame.Color('#E6E6E6'))
 
-        # Boucles pour les ecrans
+        # Screens loops
         self.run_menu = True
         self.run_simulation = False
         self.run_notice = False
 
+        # Icons
         self.taille_return_icon = 512//11
         self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
-        self.icon_return = pygame.transform.scale(pygame.image.load("view/return.png"),(self.taille_return_icon,self.taille_return_icon))
+        self.icon_return = pygame.transform.scale(pygame.image.load("./Images/return.png"),(self.taille_return_icon,self.taille_return_icon))
 
-        # Charger les images
         self.button_dim = (380,98)
-        self.box_idle = pygame.transform.scale(pygame.image.load("view/button.jpg"),(self.button_dim[0],self.button_dim[1]))
-        self.box_pressed = pygame.transform.scale(pygame.image.load("view/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
+        self.box_idle = pygame.transform.scale(pygame.image.load("./Images/button.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed = pygame.transform.scale(pygame.image.load("./Images/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
 
     def menu(self):
 
-        # Différentes écritures
+        # Fonts for text buttons
         Jouer = self.poppins_font_30.render('Jouer', True, "#007AB5")
         Level= self.poppins_font_30.render('Notice', True, "#007AB5")
         Quitter = self.poppins_font_30.render('Quitter', True, "#007AB5")
 
         while self.run_menu:
-            # Récuperer positions de la souris
+            # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
-            # Afficher les écritures
+            # Display the text
             self.window_surface.blit(self.background,(0,0))
 
-            # Zones d'interactions si souris passe sur les boutons
+            # Collision areas
             self.button_posX = (self.width/2)-(self.button_dim[0]/2)
             rect_jouer = pygame.Rect(self.button_posX, 275, self.button_dim[0], 98)
             rect_notice = pygame.Rect(self.button_posX, 390, self.button_dim[0], 98)
             rect_quitter = pygame.Rect(self.button_posX, 510, self.button_dim[0], 98)
 
-            # Icones boutons
+            # Icon buttons
             n = 11
-            self.icon_play = pygame.transform.scale(pygame.image.load("view/bouton-jouer.png"),(512//n,512//n))
-            self.icon_notice = pygame.transform.scale(pygame.image.load("view/livre.png"),(512//n,512//n))
-            self.icon_exit = pygame.transform.scale(pygame.image.load("view/se-deconnecter2.png"),(512//n,512//n))
+            self.icon_play = pygame.transform.scale(pygame.image.load("./Images/bouton-jouer.png"),(512//n,512//n))
+            self.icon_notice = pygame.transform.scale(pygame.image.load("./Images/livre.png"),(512//n,512//n))
+            self.icon_exit = pygame.transform.scale(pygame.image.load("./Images/se-deconnecter2.png"),(512//n,512//n))
            
-            # Animations quand souris passe sur les boutons
-            # Bouton Jouer
+            # Animation when mouse hover button
+            # Play button 
             if not rect_jouer.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (self.button_posX, 275))
                 self.window_surface.blit(Jouer, (600, 300))
@@ -74,7 +74,7 @@ class ViewTestPygame():
                 self.window_surface.blit(Jouer, (600, 300))
                 self.window_surface.blit(self.icon_play, (self.button_posX + 35, 275 + 25))
 
-             #Bouton Notice
+            # Notice button
             if not rect_notice.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (self.button_posX, 390))
                 self.window_surface.blit(Level, (600, 420))
@@ -84,7 +84,7 @@ class ViewTestPygame():
                 self.window_surface.blit(Level, (600, 420))
                 self.window_surface.blit(self.icon_notice, (self.button_posX + 35, 390 + 25))
 
-            # Bouton Quitter
+            # Quit Button
             if not rect_quitter.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (self.button_posX, 510))
                 self.window_surface.blit(Quitter, (585, 540))
@@ -97,34 +97,35 @@ class ViewTestPygame():
             pygame.display.flip()
 
             for event in pygame.event.get():
-                # Quitter
+                # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
                     pygame.quit()
 
-                # Evenements lors du clique
+                # Event when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Si clique sur bouton Jouer
+                    # Click on Play
                     if rect_jouer.collidepoint((mouseX,mouseY)):
-                        # Lancer l'ecran
+                        # Run the screen
                         self.run_menu = False
                         self.run_simulation = True
                         self.simulation()
                     
+                    # Click on Notice
                     if rect_notice.collidepoint((mouseX,mouseY)):
-                        # Lancer l'ecran
+                        # Run the screen
                         self.run_menu = False
                         self.run_notice = True
                         self.Notice()
 
-                    # Si clique sur bouton Quitter
+                    # Click on Quit
                     if rect_quitter.collidepoint((mouseX,mouseY)):
                         sys.exit()
 
     def Notice(self):
         text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
 
-        # Fonction pour afficher zone de texte
+        # Display text
         def display_text(surface, text, pos, font, color):
             collection = [word.split(' ') for word in text.splitlines()]
             space = font.size(' ')[0]
@@ -142,19 +143,20 @@ class ViewTestPygame():
                 y += word_height
         
         while self.run_notice:
+            # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
-            # Quitter
             for event in pygame.event.get():
+                # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
                     pygame.quit()
                 
-                # Evenements lors du clique
+                # Events when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Si clique sur bouton Jouer
+                    # Click on Play
                     if self.rect_return.collidepoint((mouseX,mouseY)):
-                        # Lancer l'ecran
+                        # Run the screen
                         self.run_menu = True
                         self.run_notice = False
                         self.menu()
@@ -170,6 +172,8 @@ class ViewTestPygame():
         body1 = simController.getFirstBody()
         body2 = simController.getSecondBody()
         while self.run_simulation:
+
+            # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
             for event in pygame.event.get():
