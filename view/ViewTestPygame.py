@@ -192,7 +192,7 @@ class ViewTestPygame():
 
     def simulation(self):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(50)
+        sim = MoreBodiesSimulation(50, self.width, self.height)
 
         while self.run_simulation:
 
