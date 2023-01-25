@@ -1,8 +1,13 @@
+
 import time
 import pygame, sys
 
+from time import sleep
 from controller.BodySimulationController import BodySimulationController
+from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
+from model.MoreBodiesSimulation import  MoreBodiesSimulation
+import numpy as np
 
 class ViewTestPygame():
     def __init__(self):
@@ -36,6 +41,10 @@ class ViewTestPygame():
         self.button_dim = (380,98)
         self.box_idle = pygame.transform.scale(pygame.image.load("./Images/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./Images/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
+
+        # sim = ThreeBodiesSimulation()
+        # sim = TwoBodiesSimulation()
+        
 
     def menu(self):
 
@@ -161,6 +170,21 @@ class ViewTestPygame():
                         self.run_notice = False
                         self.menu()
 
+        # x1 = sim.body1.pos[0]
+        # y1 = sim.body1.pos[1]
+        # vx1 = sim.body1.spd[0]
+        # vy1 = sim.body1.spd[1]
+        # ax1 = sim.body1.acc[0]
+        # ay1 = sim.body1.acc[1]
+
+        # speed1 = my_font.render(str(np.sqrt(sim.body1.spd[0]**2 + sim.body1.spd[1]**2)), False, (0, 0, 0))
+        # speed2 = my_font.render(str(np.sqrt(sim.body2.spd[0]**2 + sim.body2.spd[1]**2)), False, (0, 0, 0))
+        # window_surface.blit(speed1, [x1,y1-30])
+        # window_surface.blit(speed1, [sim.body2.pos[0],sim.body2.pos[1]-30])
+        # pygame.draw.polygon(window_surface, (0, 0, 0), ((x1+5, y1), (x1+ax1, y1+ay1), (x1-5,y1)))
+        
+        
+
             self.window_surface.blit(self.background, (0, 0))
             display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
@@ -168,9 +192,8 @@ class ViewTestPygame():
 
     def simulation(self):
         # Use simControllerulation specific.
-        simController = BodySimulationController(TwoBodiesSimulation())
-        body1 = simController.getFirstBody()
-        body2 = simController.getSecondBody()
+        sim = MoreBodiesSimulation(50)
+
         while self.run_simulation:
 
             # Get mouse position
@@ -191,24 +214,9 @@ class ViewTestPygame():
 
             self.window_surface.blit(self.background, (0, 0))
 
-            x1 = body1.pos[0]
-            y1 = body1.pos[1]
-            vx1 = body1.spd[0]
-            vy1 = body1.spd[1]
-            ax1 = body1.acc[0]
-            ay1 = body1.acc[1]
-
-            # Print the speed of bodies 
-            speed1 = self.my_font.render( simController.createFirstBodyString(), False, (0, 0, 0))
-            speed2 = self.my_font.render( simController.createSecondBodyString(), False, (0, 0, 0))
-            self.window_surface.blit(speed1, [x1,y1-30])
-            self.window_surface.blit(speed1, [body2.pos[0],body2.pos[1]-30])
-            pygame.draw.polygon(self.window_surface, (0, 0, 0), ((x1+5, y1), (x1+5000*ax1, y1+5000*ay1), (x1-5,y1)))
-            
-            pygame.draw.circle(self.window_surface,pygame.Color('#FF0000'), [ x1, y1 ], 10)
-            pygame.draw.circle(self.window_surface,pygame.Color('#0000FF'), [ body2.pos[0], body2.pos[1] ], 10)
-            
-            simController.simulation.advance()
+            for body in sim.bodies:
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]),5)
+            sim.advance()
 
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.update()
