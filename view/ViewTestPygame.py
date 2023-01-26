@@ -27,6 +27,7 @@ class ViewTestPygame():
         self.run_menu = True
         self.run_simulation = False
         self.run_notice = False
+        self.run_configurator = False
 
         self.taille_return_icon = 512//11
         self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
@@ -40,8 +41,8 @@ class ViewTestPygame():
     def menu(self):
 
         # Différentes écritures
-        Jouer = self.poppins_font_30.render('Jouer', True, "#007AB5")
-        Level= self.poppins_font_30.render('Notice', True, "#007AB5")
+        Jouer = self.poppins_font_30.render('Simuler', True, "#007AB5")
+        Level = self.poppins_font_30.render('Notice', True, "#007AB5")
         Quitter = self.poppins_font_30.render('Quitter', True, "#007AB5")
 
         while self.run_menu:
@@ -64,7 +65,7 @@ class ViewTestPygame():
             self.icon_exit = pygame.transform.scale(pygame.image.load("view/assets/se-deconnecter2.png"),(512//n,512//n))
            
             # Animations quand souris passe sur les boutons
-            # Bouton Jouer
+            # Bouton Lancer simulation
             if not rect_jouer.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (self.button_posX, 275))
                 self.window_surface.blit(Jouer, (600, 300))
@@ -74,7 +75,7 @@ class ViewTestPygame():
                 self.window_surface.blit(Jouer, (600, 300))
                 self.window_surface.blit(self.icon_play, (self.button_posX + 35, 275 + 25))
 
-             #Bouton Notice
+            # Bouton Notice
             if not rect_notice.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (self.button_posX, 390))
                 self.window_surface.blit(Level, (600, 420))
@@ -108,8 +109,8 @@ class ViewTestPygame():
                     if rect_jouer.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
                         self.run_menu = False
-                        self.run_simulation = True
-                        self.simulation()
+                        self.run_configurator = True
+                        self.configurator()
                     
                     if rect_notice.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
@@ -120,6 +121,7 @@ class ViewTestPygame():
                     # Si clique sur bouton Quitter
                     if rect_quitter.collidepoint((mouseX,mouseY)):
                         sys.exit()
+
 
     def Notice(self):
         text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
@@ -209,4 +211,40 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.update()
 
-# Pygame check event and updating screen.
+    def configurator(self):
+        while self.run_configurator:
+            # Récuperer positions de la souris
+            mouseX, mouseY = pygame.mouse.get_pos()
+
+            self.window_surface.blit(self.background,(0,0))
+            
+            # Play icon
+            self.rect_play = pygame.Rect(120, 150, self.button_dim[0], 98)
+            # Zones d'interactions si souris passe sur les boutons
+            self.icon_play = pygame.transform.scale(pygame.image.load("view/assets/bouton-jouer.png"),(512//11,512//11))
+            rect_return = pygame.Rect(120, 150, self.button_dim[0], 98)
+            
+            # If play or leave button pushed
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.run_configurator = False
+                    pygame.quit()
+                
+                # Click changement
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # If play button pressed
+                    if self.rect_return.collidepoint((mouseX,mouseY)):
+                        # change view
+                        self.run_configurator = False
+                        self.run_menu = True
+                        self.menu()
+
+                    # If play button clicked in configurator
+                    if self.rect_play.collidepoint((mouseX,mouseY)):
+                        # change view
+                        self.run_configurator = False
+                        self.run_simulation = True
+                        self.simulation()
+                
+                pygame.display.flip()
+
