@@ -168,6 +168,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
+                    pygame.quit()
                 
                 # Evenements lors du clique
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -190,15 +191,44 @@ class ViewTestPygame():
     def configuration(self):
         active_nb = False
         active_mass = False
+        can_run = False
         color_active = pygame.Color( 180, 180, 180 )
         color_passive = pygame.Color( 230, 230, 230 )
         color1 = color_passive
         color2 = color_passive
+
+        # Input Value
+        input_number = ''
+        input_mass = ''
+
+        # Launch simulation
+        n = 11
+        play_txt = "Jouer la simulation"
+        self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
+        self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
+
+        # rectangle Input
+        self.rect_input = pygame.Rect(400,200,300,30)
+        self.rect_input_outline = pygame.Rect(395,195,310,40)
+        self.rect_mass = pygame.Rect(400,400,300,30)
+        self.rect_mass_outline = pygame.Rect(395,395,310,40)
+
+        # Font of input string
+        font = pygame.font.Font(None, 30)
+        text_surface1 = font.render(input_number, True, (0, 0, 0))
+        text_surface2 = font.render(input_mass, True, (0, 0, 0))
+
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
             self.button_posX = (self.width/2)-(self.button_dim[0]/2)
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
+
+            # Check if parameters have been given
+            if(input_number != '' and input_mass != ''):
+                can_run = True
+            else:
+                can_run = False
 
             # Check state input
             if(active_nb):
@@ -215,6 +245,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_configurator = False
+                    pygame.quit()
                 # CLICK EVENT
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.rect_return.collidepoint((mouseX,mouseY)):
@@ -223,57 +254,57 @@ class ViewTestPygame():
                         self.menu()
                     # start simulation button
                     if self.rect_jouer.collidepoint((mouseX,mouseY)):
-                        #! Give NB BODY AND MASS
-                        self.run_simulation = True
-                        self.run_configurator = False
-                        self.simulation(nbBodies=input_number,mass=input_mass)
+                        if(can_run):
+                            self.run_simulation = True
+                            self.run_configurator = False
+                            self.simulation(nbBodies=input_number,mass=input_mass)
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
-                        active_nb = not active_nb
+                        if(active_mass == True):
+                            active_mass = not active_mass
+                        active_nb = not active_nb      
                     #Collide mass input
                     if self.rect_mass.collidepoint((mouseX,mouseY)):
+                        if(active_nb == True):
+                            active_nb = not active_nb
                         active_mass = not active_mass
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
                         # get text input from 0 to -1 i.e. end.
-                        input_number = input_number[:-1]
-                        input_mass = input_mass[:-1]
+                        if(active_nb):
+                            input_number = input_number[:-1]
+                            text_surface1 = font.render(input_number, True, (0, 0, 0))
+                        else:
+                            input_mass = input_mass[:-1]
+                            text_surface2 = font.render(input_mass, True, (0, 0, 0))
                     # Unicode standard is used for string
                     # formation
                     else:
-                        input_number += event.unicode
-                        input_mass += event.unicode
-            # Back to menu.
+                        if(active_nb):       
+                            input_number += event.unicode
+                            text_surface1 = font.render(input_number, True, (0, 0, 0))
+                        else:
+                            input_mass += event.unicode
+                            text_surface2 = font.render(input_mass, True, (0, 0, 0))
+
+            # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
-            # Launch simulation
-            n = 11
-            play_txt = "Jouer la simulation"
-            self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
-            self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
+
+            # Draw play
             self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))
             self.display_text(self.window_surface, play_txt, (self.width//3.2,700), self.poppins_font_30, 'black')
 
-            # Input Value
-            input_number = ''
-            input_mass = ''
             # Display text on inputs
             self.display_text(self.window_surface,"Nombre de corps ?", (400,150),self.poppins_font_30,'black')
             self.display_text(self.window_surface,"Masse des corps ?", (400,350),self.poppins_font_30,'black')
-            # rectangle Input
-            self.rect_input = pygame.Rect(400,200,300,30)
-            self.rect_input_outline = pygame.Rect(395,195,310,40)
-            self.rect_mass = pygame.Rect(400,400,300,30)
-            self.rect_mass_outline = pygame.Rect(395,395,310,40)
+            
             # Draw the rectangle
             pygame.draw.rect( self.window_surface,"black", self.rect_input_outline )
             pygame.draw.rect( self.window_surface, color1, self.rect_input )
             pygame.draw.rect( self.window_surface, "black", self.rect_mass_outline )
             pygame.draw.rect( self.window_surface, color2, self.rect_mass )
-            # Font of input string
-            font = pygame.font.Font(None, 30)
-            text_surface1 = font.render( input_number, True, (0, 0, 0))
-            text_surface2 = font.render( input_mass,True, (0, 0, 0))
+            
             # Apply text surface
             self.window_surface.blit(text_surface1, ( self.rect_input.x, self.rect_input.y ) )
             self.window_surface.blit(text_surface2, ( self.rect_mass.x, self.rect_mass.y ) )
