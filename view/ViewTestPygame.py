@@ -158,7 +158,7 @@ class ViewTestPygame():
 
     def simulation(self, nbBodies = 50, mass = 10**11):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(nbBodies, self.width, self.height)
+        sim = MoreBodiesSimulation(50, self.width, self.height)
 
         while self.run_simulation:
 
@@ -174,9 +174,9 @@ class ViewTestPygame():
                     # Si clique sur bouton Jouer
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        self.run_configurator = True
+                        self.run_menu = True
                         self.run_simulation = False
-                        self.configuration()
+                        self.menu()
 
             self.window_surface.blit(self.background, (0, 0))
 
