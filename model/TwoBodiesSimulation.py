@@ -38,10 +38,6 @@ class TwoBodiesSimulation():
         self.body1.computeNewPos()
         self.body2.computeNewPos()
 
-
-
-
-        
         # #Get force and force direction between 2 bodies
         # F = self.g*self.body1.mass*self.body2.mass / d**2
 
