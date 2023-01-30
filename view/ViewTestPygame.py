@@ -16,7 +16,7 @@ class ViewTestPygame():
         # Fonts
         pygame.font.init()
         self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
-        self.poppins_font_30 = pygame.font.Font("view/Poppins-regular.ttf", 30)
+        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-regular.ttf", 30)
         pygame.font.get_fonts()
 
         # Windows parameters
@@ -32,19 +32,16 @@ class ViewTestPygame():
         self.run_menu = True
         self.run_simulation = False
         self.run_notice = False
+        self.run_configurator = True
 
         # Icons
         self.taille_return_icon = 512//11
         self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
-        self.icon_return = pygame.transform.scale(pygame.image.load("./Images/return.png"),(self.taille_return_icon,self.taille_return_icon))
+        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.taille_return_icon,self.taille_return_icon))
 
         self.button_dim = (380,98)
-        self.box_idle = pygame.transform.scale(pygame.image.load("./Images/button.jpg"),(self.button_dim[0],self.button_dim[1]))
-        self.box_pressed = pygame.transform.scale(pygame.image.load("./Images/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
-
-        # sim = ThreeBodiesSimulation()
-        # sim = TwoBodiesSimulation()
-        
+        self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
 
     def menu(self):
 
@@ -68,9 +65,9 @@ class ViewTestPygame():
 
             # Icon buttons
             n = 11
-            self.icon_play = pygame.transform.scale(pygame.image.load("./Images/bouton-jouer.png"),(512//n,512//n))
-            self.icon_notice = pygame.transform.scale(pygame.image.load("./Images/livre.png"),(512//n,512//n))
-            self.icon_exit = pygame.transform.scale(pygame.image.load("./Images/se-deconnecter2.png"),(512//n,512//n))
+            self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
+            self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
+            self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
            
             # Animation when mouse hover button
             # Play button 
@@ -117,8 +114,8 @@ class ViewTestPygame():
                     if rect_jouer.collidepoint((mouseX,mouseY)):
                         # Run the screen
                         self.run_menu = False
-                        self.run_simulation = True
-                        self.simulation()
+                        self.run_configurator = True
+                        self.configuration()
                     
                     # Click on Notice
                     if rect_notice.collidepoint((mouseX,mouseY)):
@@ -133,23 +130,6 @@ class ViewTestPygame():
 
     def Notice(self):
         text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
-
-        # Display text
-        def display_text(surface, text, pos, font, color):
-            collection = [word.split(' ') for word in text.splitlines()]
-            space = font.size(' ')[0]
-            x,y = pos
-            for lines in collection:
-                for words in lines:
-                    word_surface = font.render(words, True, color)
-                    word_width, word_height = word_surface.get_size()
-                    if x + word_width >= self.width:
-                        x = pos[0]
-                        y += word_height
-                    surface.blit(word_surface, (x,y))
-                    x += word_width + space
-                x = pos[0]
-                y += word_height
         
         while self.run_notice:
             # Get mouse position
@@ -170,29 +150,14 @@ class ViewTestPygame():
                         self.run_notice = False
                         self.menu()
 
-        # x1 = sim.body1.pos[0]
-        # y1 = sim.body1.pos[1]
-        # vx1 = sim.body1.spd[0]
-        # vy1 = sim.body1.spd[1]
-        # ax1 = sim.body1.acc[0]
-        # ay1 = sim.body1.acc[1]
-
-        # speed1 = my_font.render(str(np.sqrt(sim.body1.spd[0]**2 + sim.body1.spd[1]**2)), False, (0, 0, 0))
-        # speed2 = my_font.render(str(np.sqrt(sim.body2.spd[0]**2 + sim.body2.spd[1]**2)), False, (0, 0, 0))
-        # window_surface.blit(speed1, [x1,y1-30])
-        # window_surface.blit(speed1, [sim.body2.pos[0],sim.body2.pos[1]-30])
-        # pygame.draw.polygon(window_surface, (0, 0, 0), ((x1+5, y1), (x1+ax1, y1+ay1), (x1-5,y1)))
-        
-        
-
             self.window_surface.blit(self.background, (0, 0))
-            display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.flip()
 
-    def simulation(self):
+    def simulation(self, nbBodies = 50, mass = 10**11):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(50, self.width, self.height)
+        sim = MoreBodiesSimulation(nbBodies, self.width, self.height)
 
         while self.run_simulation:
 
@@ -208,9 +173,9 @@ class ViewTestPygame():
                     # Si clique sur bouton Jouer
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        self.run_menu = True
+                        self.run_configurator = True
                         self.run_simulation = False
-                        self.menu()
+                        self.configuration()
 
             self.window_surface.blit(self.background, (0, 0))
 
@@ -221,4 +186,103 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.update()
 
-# Pygame check event and updating screen.
+    def configuration(self):
+        while self.run_configurator:
+            self.window_surface.blit(self.background, (0, 0))
+            self.button_posX = (self.width/2)-(self.button_dim[0]/2)
+            # Get mouse position
+            mouseX, mouseY = pygame.mouse.get_pos()
+            # Input Color
+            color_active = pygame.Color( 180, 180, 180 )
+            color_passive = pygame.Color( 230, 230, 230 )
+            color1 = color_passive
+            color2 = color_passive
+            # EVENT
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.run_configurator = False
+                # CLICK EVENT
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.rect_return.collidepoint((mouseX,mouseY)):
+                        self.run_menu = True
+                        self.run_configurator = False
+                        self.menu()
+                    # start simulation button
+                    if self.rect_jouer.collidepoint((mouseX,mouseY)):
+                        #! Give NB BODY AND MASS
+                        self.run_simulation = True
+                        self.run_configurator = False
+                        self.simulation(nbBodies=input_number,mass=input_mass)
+                    #collide nb corps input
+                    if self.rect_input.collidepoint((mouseX,mouseY)):
+                        color1 = color_active
+                    else:
+                        color1 = color_passive
+                    #Collide mass iinput
+                    if self.rect_mass.collidepoint((mouseX,mouseY)):
+                        color2 = color_active
+                    else:
+                        color2 = color_passive
+                if event.type == pygame.KEYDOWN:
+                    # Check for backspace
+                    if event.key == pygame.K_BACKSPACE:
+                        # get text input from 0 to -1 i.e. end.
+                        input_number = input_number[:-1]
+                        input_mass = input_mass[:-1]
+                    # Unicode standard is used for string
+                    # formation
+                    else:
+                        input_number += event.unicode
+                        input_mass += event.unicode
+            # Back to menu.
+            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+            # Launch simulation
+            n = 11
+            play_txt = "Jouer la simulation"
+            self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
+            self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
+            self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))
+            self.display_text(self.window_surface, play_txt, (self.width//3.2,700), self.poppins_font_30, 'black')
+
+            # Input Value
+            input_number = ''
+            input_mass = ''
+            # Display text on inputs
+            self.display_text(self.window_surface,"Nombre de corps ?", (400,150),self.poppins_font_30,'black')
+            self.display_text(self.window_surface,"Masse des corps ?", (400,350),self.poppins_font_30,'black')
+            # rectangle Input
+            self.rect_input = pygame.Rect(400,200,300,30)
+            self.rect_input_outline = pygame.Rect(395,195,310,40)
+            self.rect_mass = pygame.Rect(400,400,300,30)
+            self.rect_mass_outline = pygame.Rect(395,395,310,40)
+            # Draw the rectangle
+            pygame.draw.rect( self.window_surface,"black", self.rect_input_outline )
+            pygame.draw.rect( self.window_surface, color1, self.rect_input )
+            pygame.draw.rect( self.window_surface, "black", self.rect_mass_outline )
+            pygame.draw.rect( self.window_surface, color2, self.rect_mass )
+            # Font of input string
+            font = pygame.font.Font(None, 30)
+            text_surface1 = font.render( input_number, True, (0, 0, 0))
+            text_surface2 = font.render( input_mass,True, (0, 0, 0))
+            # Apply text surface
+            self.window_surface.blit(text_surface1, ( self.rect_input.x, self.rect_input.y ) )
+            self.window_surface.blit(text_surface2, ( self.rect_mass.x, self.rect_mass.y ) )
+            # Update the screen
+            pygame.display.update()
+
+        # Display text
+    def display_text(self, surface, text, pos, font, color):
+        collection = [word.split(' ') for word in text.splitlines()]
+        space = font.size(' ')[0]
+        x,y = pos
+        for lines in collection:
+            for words in lines:
+                word_surface = font.render(words, True, color)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= self.width:
+                    x = pos[0]
+                    y += word_height
+                surface.blit(word_surface, (x,y))
+                x += word_width + space
+            x = pos[0]
+            y += word_height
