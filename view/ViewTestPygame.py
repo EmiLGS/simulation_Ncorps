@@ -132,7 +132,11 @@ class ViewTestPygame():
                         sys.exit()
 
     def Notice(self):
-        text = "Notice d'utilisation de la simulation à NCorps\n 1. Paramétrage :\n - Nombre de boules :"
+        text = ("Enoncé : \n" + 
+                "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
+                "Paramètres : \n" +
+                "- Nombres d'objets \n"
+                "- Masses minimums et maximums")
 
         # Display text
         def display_text(surface, text, pos, font, color):
