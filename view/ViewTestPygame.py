@@ -188,16 +188,29 @@ class ViewTestPygame():
             pygame.display.update()
 
     def configuration(self):
+        active_nb = False
+        active_mass = False
+        color_active = pygame.Color( 180, 180, 180 )
+        color_passive = pygame.Color( 230, 230, 230 )
+        color1 = color_passive
+        color2 = color_passive
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
             self.button_posX = (self.width/2)-(self.button_dim[0]/2)
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
-            # Input Color
-            color_active = pygame.Color( 180, 180, 180 )
-            color_passive = pygame.Color( 230, 230, 230 )
-            color1 = color_passive
-            color2 = color_passive
+
+            # Check state input
+            if(active_nb):
+                color1 = color_active
+            else:
+                color1 = color_passive
+            
+            if(active_mass):
+                color2 = color_active
+            else:
+                color2 = color_passive
+            
             # EVENT
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -216,14 +229,10 @@ class ViewTestPygame():
                         self.simulation(nbBodies=input_number,mass=input_mass)
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
-                        color1 = color_active
-                    else:
-                        color1 = color_passive
-                    #Collide mass iinput
+                        active_nb = not active_nb
+                    #Collide mass input
                     if self.rect_mass.collidepoint((mouseX,mouseY)):
-                        color2 = color_active
-                    else:
-                        color2 = color_passive
+                        active_mass = not active_mass
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
