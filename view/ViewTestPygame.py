@@ -158,7 +158,7 @@ class ViewTestPygame():
 
     def simulation(self, nbBodies = 50, mass = 10**11):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(50, self.width, self.height)
+        sim = MoreBodiesSimulation(nbBodies, self.width, self.height)
 
         while self.run_simulation:
 
@@ -257,7 +257,7 @@ class ViewTestPygame():
                         if(can_run):
                             self.run_simulation = True
                             self.run_configurator = False
-                            self.simulation(nbBodies=input_number,mass=input_mass)
+                            self.simulation(nbBodies=int(input_number),mass=input_mass)
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
