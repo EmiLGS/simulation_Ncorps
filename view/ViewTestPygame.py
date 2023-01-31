@@ -15,8 +15,10 @@ class ViewTestPygame():
 
         # Fonts
         pygame.font.init()
-        self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
-        self.poppins_font_30 = pygame.font.Font("view/Poppins-regular.ttf", 30)
+        self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-regular.ttf", 15)
+        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-regular.ttf", 30)
+        self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-regular.ttf", 35)
+        self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-regular.ttf", 80)
         pygame.font.get_fonts()
 
         # Windows parameters
@@ -32,26 +34,18 @@ class ViewTestPygame():
         self.run_menu = True
         self.run_simulation = False
         self.run_notice = False
+        self.run_configurator = True
 
         # Icons
         self.taille_return_icon = 512//11
         self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
-        self.icon_return = pygame.transform.scale(pygame.image.load("./Images/return.png"),(self.taille_return_icon,self.taille_return_icon))
-
-        self.button_dim = (380,98)
-        self.box_idle = pygame.transform.scale(pygame.image.load("./Images/button.jpg"),(self.button_dim[0],self.button_dim[1]))
-        self.box_pressed = pygame.transform.scale(pygame.image.load("./Images/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
-
-        # sim = ThreeBodiesSimulation()
-        # sim = TwoBodiesSimulation()
-        
+        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.taille_return_icon,self.taille_return_icon))
+        #(380,98)
+        self.button_dim = (456,118)
+        self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
 
     def menu(self):
-
-        # Fonts for text buttons
-        Jouer = self.poppins_font_30.render('Jouer', True, "#007AB5")
-        Level= self.poppins_font_30.render('Notice', True, "#007AB5")
-        Quitter = self.poppins_font_30.render('Quitter', True, "#007AB5")
 
         while self.run_menu:
             # Get mouse position
@@ -61,47 +55,49 @@ class ViewTestPygame():
             self.window_surface.blit(self.background,(0,0))
 
             # Collision areas
-            self.button_posX = (self.width/2)-(self.button_dim[0]/2)
-            rect_jouer = pygame.Rect(self.button_posX, 275, self.button_dim[0], 98)
-            rect_notice = pygame.Rect(self.button_posX, 390, self.button_dim[0], 98)
-            rect_quitter = pygame.Rect(self.button_posX, 510, self.button_dim[0], 98)
+            button_posX = (self.width/2)-(self.button_dim[0]/2)
+            button_posY = 225
+            decalage_Y = 150
+            rect_jouer = pygame.Rect(button_posX, button_posY, self.button_dim[0], self.button_dim[1])
+            rect_notice = pygame.Rect(button_posX, button_posY + decalage_Y, self.button_dim[0], self.button_dim[1])
+            rect_quitter = pygame.Rect(button_posX, button_posY + decalage_Y*2, self.button_dim[0], self.button_dim[1])
 
             # Icon buttons
             n = 11
-            self.icon_play = pygame.transform.scale(pygame.image.load("./Images/bouton-jouer.png"),(512//n,512//n))
-            self.icon_notice = pygame.transform.scale(pygame.image.load("./Images/livre.png"),(512//n,512//n))
-            self.icon_exit = pygame.transform.scale(pygame.image.load("./Images/se-deconnecter2.png"),(512//n,512//n))
+            self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
+            self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
+            self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
+
+            self.display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
            
             # Animation when mouse hover button
             # Play button 
             if not rect_jouer.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (self.button_posX, 275))
-                self.window_surface.blit(Jouer, (600, 300))
-                self.window_surface.blit(self.icon_play, (self.button_posX + 35, 275 + 25))
+                self.window_surface.blit(self.box_idle, (button_posX, button_posY))   
             else:
-                self.window_surface.blit(self.box_pressed, (self.button_posX, 275))
-                self.window_surface.blit(Jouer, (600, 300))
-                self.window_surface.blit(self.icon_play, (self.button_posX + 35, 275 + 25))
-
+                self.window_surface.blit(self.box_pressed, (button_posX, button_posY))
+                
             # Notice button
             if not rect_notice.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (self.button_posX, 390))
-                self.window_surface.blit(Level, (600, 420))
-                self.window_surface.blit(self.icon_notice, (self.button_posX + 35, 390 + 25))
+                self.window_surface.blit(self.box_idle, (button_posX, button_posY + decalage_Y))
             else:
-                self.window_surface.blit(self.box_pressed, (self.button_posX, 390))
-                self.window_surface.blit(Level, (600, 420))
-                self.window_surface.blit(self.icon_notice, (self.button_posX + 35, 390 + 25))
-
+                self.window_surface.blit(self.box_pressed, (button_posX, button_posY + decalage_Y))
+                
             # Quit Button
             if not rect_quitter.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (self.button_posX, 510))
-                self.window_surface.blit(Quitter, (585, 540))
-                self.window_surface.blit(self.icon_exit, (self.button_posX + 35, 510 + 25))
+                self.window_surface.blit(self.box_idle, (button_posX, button_posY + decalage_Y*2))
             else:
-                self.window_surface.blit(self.box_pressed, (self.button_posX, 510))
-                self.window_surface.blit(Quitter, (585, 540))
-                self.window_surface.blit(self.icon_exit, (self.button_posX + 35, 510 + 25))
+                self.window_surface.blit(self.box_pressed, (button_posX, button_posY + decalage_Y*2))
+            
+            # Draw icons
+            self.window_surface.blit(self.icon_play, (button_posX + 45, button_posY + 35))
+            self.window_surface.blit(self.icon_notice, (button_posX + 45, button_posY + decalage_Y + 35))
+            self.window_surface.blit(self.icon_exit, (button_posX + 45, button_posY + decalage_Y*2 + 35))
+
+            # Draw Buttons texts
+            self.display_text(self.window_surface, 'Jouer', (600, button_posY + 35), self.poppins_font_35, '#007AB5')
+            self.display_text(self.window_surface, 'Notice', (600, button_posY + decalage_Y + 35), self.poppins_font_35, '#007AB5')
+            self.display_text(self.window_surface, 'Quitter', (595, button_posY + decalage_Y*2 + 35), self.poppins_font_35, '#007AB5')
 
             pygame.display.flip()
 
@@ -117,8 +113,8 @@ class ViewTestPygame():
                     if rect_jouer.collidepoint((mouseX,mouseY)):
                         # Run the screen
                         self.run_menu = False
-                        self.run_simulation = True
-                        self.simulation()
+                        self.run_configurator = True
+                        self.configuration()
                     
                     # Click on Notice
                     if rect_notice.collidepoint((mouseX,mouseY)):
