@@ -3,6 +3,7 @@ import time
 import pygame, sys
 
 from time import sleep
+from decimal import Decimal
 from controller.BodySimulationController import BodySimulationController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
@@ -153,9 +154,9 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.flip()
 
-    def simulation(self, nbBodies = 50, mass = 10**11):
+    def simulation(self, nbBodies = 50, mass = (5.9722*10**24) ):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(nbBodies, self.width, self.height)
+        sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
 
         while self.run_simulation:
 
@@ -172,9 +173,9 @@ class ViewTestPygame():
                     # Si clique sur bouton Jouer
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        self.run_menu = True
+                        self.run_configurator = True
                         self.run_simulation = False
-                        self.menu()
+                        self.configuration()
 
             self.window_surface.blit(self.background, (0, 0))
 
@@ -195,8 +196,8 @@ class ViewTestPygame():
         color2 = color_passive
 
         # Input Value
-        input_number = ''
-        input_mass = ''
+        input_number = '50'
+        input_mass = '5.9722*10**24'
 
         # Launch simulation
         self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
@@ -246,8 +247,8 @@ class ViewTestPygame():
                         if(can_run):
                             self.run_simulation = True
                             self.run_configurator = False
-                            self.simulation(nbBodies=int(input_number),mass=input_mass)
-                            
+                            #! RAJOUTER UNE FONCTION DE TEST DES VALEURS (INTERVALLES, COHéRENCE ETC)
+                            self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
@@ -280,18 +281,17 @@ class ViewTestPygame():
 
             # Draw play
             self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))
-            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.2,700), self.poppins_font_30, '#007AB5')
+            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
 
             # Display text on inputs
-            self.display_text(self.window_surface,"Nombre de corps ?", (400,150),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface,"Masse des corps ?", (400,350),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
             
             # Draw the rectangle
             pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline )
             pygame.draw.rect( self.window_surface, color1, self.rect_input )
             pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline )
             pygame.draw.rect( self.window_surface, color2, self.rect_mass )
-            
             # Apply text surface
             self.display_text(self.window_surface, input_number, (self.rect_input.x, self.rect_input.y), self.poppins_font_30, 'black')
             self.display_text(self.window_surface, input_mass, (self.rect_mass.x, self.rect_mass.y), self.poppins_font_30, 'black')
@@ -314,3 +314,17 @@ class ViewTestPygame():
                 x += word_width + space
             x = pos[0]
             y += word_height
+    
+    # FUnction to return the correct float of the input mass field
+    def bodyMass(self,mass_val):
+        res = ''
+        res2 = ''
+        i = 0
+        j = -1
+        while (mass_val[i]) in ['1','2','3','4','5','6','7','8','9','.']:
+            res += mass_val[i]
+            i+=1
+        while mass_val[j] != '*':
+            res2 += mass_val[j]
+            j -= 1
+        return float(res) * 10 ** int(res2)

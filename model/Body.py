@@ -1,12 +1,14 @@
 import numpy as np
 
 class Body():
-    def __init__(self,x,y):
+    def __init__(self, mass, x, y):
         self.pos = np.array([x+0.1,y+0.1])
         self.spd = np.array([0.0,0.0])
         self.acc = np.array([0.0,0.0])
-        # MASSE TERRE
-        self.mass =  5.9722*10**24 # 10**11
+        # MASSE TERRE = 5.9722*10**24
+        # MASSE MINIMAL = 10**11
+        self.mass = mass
+        
 
     def addForce(self,force):
         self.acc += force/self.mass
