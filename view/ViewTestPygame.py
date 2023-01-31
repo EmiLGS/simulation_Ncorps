@@ -45,6 +45,11 @@ class ViewTestPygame():
         self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
 
+        n = 11
+        self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
+        self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
+        self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
+
     def menu(self):
 
         while self.run_menu:
@@ -61,12 +66,6 @@ class ViewTestPygame():
             rect_jouer = pygame.Rect(button_posX, button_posY, self.button_dim[0], self.button_dim[1])
             rect_notice = pygame.Rect(button_posX, button_posY + decalage_Y, self.button_dim[0], self.button_dim[1])
             rect_quitter = pygame.Rect(button_posX, button_posY + decalage_Y*2, self.button_dim[0], self.button_dim[1])
-
-            # Icon buttons
-            n = 11
-            self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
-            self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
-            self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
 
             self.display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
            
@@ -190,8 +189,8 @@ class ViewTestPygame():
         active_nb = False
         active_mass = False
         can_run = False
-        color_active = pygame.Color( 180, 180, 180 )
-        color_passive = pygame.Color( 230, 230, 230 )
+        color_active = pygame.Color(180, 180, 180)
+        color_passive = pygame.Color(230, 230, 230)
         color1 = color_passive
         color2 = color_passive
 
@@ -200,21 +199,13 @@ class ViewTestPygame():
         input_mass = ''
 
         # Launch simulation
-        n = 11
-        play_txt = "Jouer la simulation"
-        self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
         self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
 
         # rectangle Input
-        self.rect_input = pygame.Rect(400,200,300,30)
-        self.rect_input_outline = pygame.Rect(395,195,310,40)
-        self.rect_mass = pygame.Rect(400,400,300,30)
-        self.rect_mass_outline = pygame.Rect(395,395,310,40)
-
-        # Font of input string
-        font = pygame.font.Font(None, 30)
-        text_surface1 = font.render(input_number, True, (0, 0, 0))
-        text_surface2 = font.render(input_mass, True, (0, 0, 0))
+        self.rect_input = pygame.Rect(400,200,300,40)
+        self.rect_input_outline = pygame.Rect(395,195,310,50)
+        self.rect_mass = pygame.Rect(400,400,300,40)
+        self.rect_mass_outline = pygame.Rect(395,395,310,50)
 
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
@@ -256,6 +247,7 @@ class ViewTestPygame():
                             self.run_simulation = True
                             self.run_configurator = False
                             self.simulation(nbBodies=int(input_number),mass=input_mass)
+                            
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
@@ -272,40 +264,37 @@ class ViewTestPygame():
                         # get text input from 0 to -1 i.e. end.
                         if(active_nb):
                             input_number = input_number[:-1]
-                            text_surface1 = font.render(input_number, True, (0, 0, 0))
                         else:
                             input_mass = input_mass[:-1]
-                            text_surface2 = font.render(input_mass, True, (0, 0, 0))
+
                     # Unicode standard is used for string
                     # formation
                     else:
                         if(active_nb):       
                             input_number += event.unicode
-                            text_surface1 = font.render(input_number, True, (0, 0, 0))
                         else:
                             input_mass += event.unicode
-                            text_surface2 = font.render(input_mass, True, (0, 0, 0))
 
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
 
             # Draw play
             self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))
-            self.display_text(self.window_surface, play_txt, (self.width//3.2,700), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.2,700), self.poppins_font_30, '#007AB5')
 
             # Display text on inputs
-            self.display_text(self.window_surface,"Nombre de corps ?", (400,150),self.poppins_font_30,'black')
-            self.display_text(self.window_surface,"Masse des corps ?", (400,350),self.poppins_font_30,'black')
+            self.display_text(self.window_surface,"Nombre de corps ?", (400,150),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface,"Masse des corps ?", (400,350),self.poppins_font_30,'#007AB5')
             
             # Draw the rectangle
-            pygame.draw.rect( self.window_surface,"black", self.rect_input_outline )
+            pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline )
             pygame.draw.rect( self.window_surface, color1, self.rect_input )
-            pygame.draw.rect( self.window_surface, "black", self.rect_mass_outline )
+            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline )
             pygame.draw.rect( self.window_surface, color2, self.rect_mass )
             
             # Apply text surface
-            self.window_surface.blit(text_surface1, ( self.rect_input.x, self.rect_input.y ) )
-            self.window_surface.blit(text_surface2, ( self.rect_mass.x, self.rect_mass.y ) )
+            self.display_text(self.window_surface, input_number, (self.rect_input.x, self.rect_input.y), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, input_mass, (self.rect_mass.x, self.rect_mass.y), self.poppins_font_30, 'black')
             # Update the screen
             pygame.display.update()
 
