@@ -4,6 +4,7 @@ import pygame, sys
 
 from time import sleep
 from decimal import Decimal
+from pickle import *
 from controller.BodySimulationController import BodySimulationController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
@@ -128,12 +129,13 @@ class ViewTestPygame():
                         sys.exit()
 
     def Notice(self):
-
+        f = open ("resultats","rb")
+        res = load (f)
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
-                "- Nombres d'objets \n"
-                "- Masses minimums et maximums")
+                "- Nombres d'objets \n " +
+                "- Masses minimums et maximums \n" + res)
 
         # Display text
         def display_text(surface, text, pos, font, color):
@@ -192,9 +194,12 @@ class ViewTestPygame():
                 
                 # Evenements lors du clique
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Si clique sur bouton Jouer
+                    # Si clique sur bouton Retour
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
+                        f = open("resultats","wb")
+                        dump ("test", mouseX)
+                        f.close()
                         self.run_configurator = True
                         self.run_simulation = False
                         self.configuration()
