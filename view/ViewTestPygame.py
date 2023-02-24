@@ -129,13 +129,13 @@ class ViewTestPygame():
                         sys.exit()
 
     def Notice(self):
-        f = open ("resultats","rb")
-        res = load (f)
+        f = open ("resultats","r")
+        print(f.read())
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
                 "- Nombres d'objets \n " +
-                "- Masses minimums et maximums \n" + res)
+                "- Masses minimums et maximums \n" + f.read())
 
         # Display text
         def display_text(surface, text, pos, font, color):
@@ -197,8 +197,8 @@ class ViewTestPygame():
                     # Si clique sur bouton Retour
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        f = open("resultats","wb")
-                        dump ("test", mouseX)
+                        f = open("resultats","w")
+                        f.write("tesst")
                         f.close()
                         self.run_configurator = True
                         self.run_simulation = False
