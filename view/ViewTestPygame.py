@@ -134,25 +134,8 @@ class ViewTestPygame():
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
-                "- Nombres d'objets \n " +
-                "- Masses minimums et maximums \n" + res)
-
-        # Display text
-        def display_text(surface, text, pos, font, color):
-            collection = [word.split(' ') for word in text.splitlines()]
-            space = font.size(' ')[0]
-            x,y = pos
-            for lines in collection:
-                for words in lines:
-                    word_surface = font.render(words, True, color)
-                    word_width, word_height = word_surface.get_size()
-                    if x + word_width >= self.width:
-                        x = pos[0]
-                        y += word_height
-                    surface.blit(word_surface, (x,y))
-                    x += word_width + space
-                x = pos[0]
-                y += word_height
+                "- Nombres d'objets \n"
+                "- Masses minimums et maximums")
         
         while self.run_notice:
             # Get mouse position
