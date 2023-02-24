@@ -4,7 +4,7 @@ import pygame, sys
 
 from time import sleep
 from decimal import Decimal
-from pickle import *
+from tkinter import filedialog
 from controller.BodySimulationController import BodySimulationController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
@@ -129,13 +129,11 @@ class ViewTestPygame():
                         sys.exit()
 
     def Notice(self):
-        f = open ("resultats","r")
-        print(f.read())
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
-                "- Nombres d'objets \n " +
-                "- Masses minimums et maximums \n" + f.read())
+                "- Nombres d'objets \n" +
+                "- Masses minimums et maximums \n")
 
         # Display text
         def display_text(surface, text, pos, font, color):
@@ -197,9 +195,6 @@ class ViewTestPygame():
                     # Si clique sur bouton Retour
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        f = open("resultats","w")
-                        f.write("tesst")
-                        f.close()
                         self.run_configurator = True
                         self.run_simulation = False
                         self.configuration()
@@ -234,6 +229,7 @@ class ViewTestPygame():
         self.rect_input_outline = pygame.Rect(395,195,310,50)
         self.rect_mass = pygame.Rect(400,400,300,40)
         self.rect_mass_outline = pygame.Rect(395,395,310,50)
+        self.rect_import = pygame.Rect(500,200,300,40)
 
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
@@ -286,6 +282,8 @@ class ViewTestPygame():
                         if(active_nb == True):
                             active_nb = not active_nb
                         active_mass = not active_mass
+                    if self.rect_import.collidepoint((mouseX, mouseY)):
+                        filename = filedialog.askopenfilename(initialdir="/", title ="selectionner", filetypes=(("Fichier Texte","*.txt"),("Fichier PDF","*.pdf")))
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
@@ -315,10 +313,11 @@ class ViewTestPygame():
             self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
             
             # Draw the rectangle
-            pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline )
-            pygame.draw.rect( self.window_surface, color1, self.rect_input )
-            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline )
-            pygame.draw.rect( self.window_surface, color2, self.rect_mass )
+            pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline)
+            pygame.draw.rect( self.window_surface, color1, self.rect_input)
+            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline)
+            pygame.draw.rect( self.window_surface, color2, self.rect_mass)
+            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_import)
             # Apply text surface
             self.display_text(self.window_surface, input_number, (self.rect_input.x, self.rect_input.y), self.poppins_font_30, 'black')
             self.display_text(self.window_surface, input_mass, (self.rect_mass.x, self.rect_mass.y), self.poppins_font_30, 'black')
