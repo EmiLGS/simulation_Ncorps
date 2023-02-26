@@ -205,6 +205,8 @@ class ViewTestPygame():
         input_number = '50'
         input_mass = '5.9722*10**24'
 
+        self.button_posX = (self.width/2)-(self.button_dim[0]/2)
+
         # Launch simulation
         self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
 
@@ -213,11 +215,11 @@ class ViewTestPygame():
         self.rect_input_outline = pygame.Rect(395,195,310,50)
         self.rect_mass = pygame.Rect(400,400,300,40)
         self.rect_mass_outline = pygame.Rect(395,395,310,50)
-        self.rect_import = pygame.Rect(400,400,456,118)
+        self.rect_import = pygame.Rect(self.button_posX,525,456,118)
 
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
-            self.button_posX = (self.width/2)-(self.button_dim[0]/2)
+            
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
@@ -267,11 +269,11 @@ class ViewTestPygame():
                             active_nb = not active_nb
                         active_mass = not active_mass
                     if self.rect_import.collidepoint((mouseX, mouseY)):
-                        self.window_surface.blit(self.box_pressed, (400,400))
-                        filename = filedialog.askopenfilename(initialdir="/", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        self.window_surface.blit(self.box_pressed, (self.button_posX,525))
+                        filename = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
                         bodys = self.getBodyFromCSV(filename)
                         for i in range(len(bodys)):
-                            print(bodys[i])
+                            print(bodys[i][0])
                         
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
@@ -291,7 +293,7 @@ class ViewTestPygame():
                             input_mass += event.unicode
 
             # Draw import butotn
-            self.window_surface.blit(self.box_idle, ((400,400)))
+            self.window_surface.blit(self.box_idle, ((self.button_posX,525)))
 
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
@@ -303,7 +305,7 @@ class ViewTestPygame():
             # Display text on inputs
             self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
             self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface, "Import", (400, 550), self.poppins_font_35, '#007AB5')
+            self.display_text(self.window_surface, "Import", (self.button_posX + 225, 560), self.poppins_font_35, '#007AB5')
 
             # Draw the rectangle
             pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline)
@@ -336,13 +338,20 @@ class ViewTestPygame():
     
     def getBodyFromCSV(self, file):
         tab = []
+        row_count = 0
+        with open(file, 'r') as f:
+            # Créer un objet csv à partir du fichier
+            obj = csv.reader(f)
+            row_count = sum(1 for row in obj)
+            tab = [0] * row_count
+
         with open(file, 'r') as f:
             # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
             i = 0
             for ligne in obj:
                 tab[i] = ligne
-                i = i + 1
+                i += 1
         return tab
     
     # FUnction to return the correct float of the input mass field
