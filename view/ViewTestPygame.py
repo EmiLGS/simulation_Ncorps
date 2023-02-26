@@ -1,6 +1,7 @@
 
 import time
 import pygame, sys
+import csv
 
 from time import sleep
 from decimal import Decimal
@@ -134,23 +135,6 @@ class ViewTestPygame():
                 "Paramètres : \n" +
                 "- Nombres d'objets \n" +
                 "- Masses minimums et maximums \n")
-
-        # Display text
-        def display_text(surface, text, pos, font, color):
-            collection = [word.split(' ') for word in text.splitlines()]
-            space = font.size(' ')[0]
-            x,y = pos
-            for lines in collection:
-                for words in lines:
-                    word_surface = font.render(words, True, color)
-                    word_width, word_height = word_surface.get_size()
-                    if x + word_width >= self.width:
-                        x = pos[0]
-                        y += word_height
-                    surface.blit(word_surface, (x,y))
-                    x += word_width + space
-                x = pos[0]
-                y += word_height
         
         while self.run_notice:
             # Get mouse position
@@ -229,7 +213,7 @@ class ViewTestPygame():
         self.rect_input_outline = pygame.Rect(395,195,310,50)
         self.rect_mass = pygame.Rect(400,400,300,40)
         self.rect_mass_outline = pygame.Rect(395,395,310,50)
-        self.rect_import = pygame.Rect(500,200,300,40)
+        self.rect_import = pygame.Rect(400,400,456,118)
 
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
@@ -283,7 +267,12 @@ class ViewTestPygame():
                             active_nb = not active_nb
                         active_mass = not active_mass
                     if self.rect_import.collidepoint((mouseX, mouseY)):
-                        filename = filedialog.askopenfilename(initialdir="/", title ="selectionner", filetypes=(("Fichier Texte","*.txt"),("Fichier PDF","*.pdf")))
+                        self.window_surface.blit(self.box_pressed, (400,400))
+                        filename = filedialog.askopenfilename(initialdir="/", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        bodys = self.getBodyFromCSV(filename)
+                        for i in range(len(bodys)):
+                            print(bodys[i])
+                        
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
@@ -301,6 +290,9 @@ class ViewTestPygame():
                         else:
                             input_mass += event.unicode
 
+            # Draw import butotn
+            self.window_surface.blit(self.box_idle, ((400,400)))
+
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
 
@@ -311,13 +303,14 @@ class ViewTestPygame():
             # Display text on inputs
             self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
             self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
-            
+            self.display_text(self.window_surface, "Import", (400, 550), self.poppins_font_35, '#007AB5')
+
             # Draw the rectangle
             pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline)
             pygame.draw.rect( self.window_surface, color1, self.rect_input)
             pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline)
             pygame.draw.rect( self.window_surface, color2, self.rect_mass)
-            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_import)
+
             # Apply text surface
             self.display_text(self.window_surface, input_number, (self.rect_input.x, self.rect_input.y), self.poppins_font_30, 'black')
             self.display_text(self.window_surface, input_mass, (self.rect_mass.x, self.rect_mass.y), self.poppins_font_30, 'black')
@@ -340,6 +333,17 @@ class ViewTestPygame():
                 x += word_width + space
             x = pos[0]
             y += word_height
+    
+    def getBodyFromCSV(self, file):
+        tab = []
+        with open(file, 'r') as f:
+            # Créer un objet csv à partir du fichier
+            obj = csv.reader(f)
+            i = 0
+            for ligne in obj:
+                tab[i] = ligne
+                i = i + 1
+        return tab
     
     # FUnction to return the correct float of the input mass field
     def bodyMass(self,mass_val):
