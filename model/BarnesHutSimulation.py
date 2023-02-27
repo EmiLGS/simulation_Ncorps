@@ -8,10 +8,9 @@ class BarnesHutSimulation():
         self.precision = precision
         self.quadTreeWidth = max(width,height)
         self.bodies = [Body(randint(20,width-20),randint(20,height-20),mass) for _ in range(bodyCount)]
-    
-    def advance(self):
 
-        print(", ".join(list(map(str, self.bodies))))
+    def advance(self):
+        #TODO compute quadtree size with maximum and minimum of all bodies positions
         quadtree = QuadTree(self.quadTreeWidth,self.bodies)
 
         quadtree.computeMasses()

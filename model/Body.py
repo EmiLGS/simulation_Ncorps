@@ -14,7 +14,7 @@ class Body():
         self.acc += force/self.mass
 
     def computeNewPos(self):
-        print(self.acc)
+        #TODO check if accMax is good enough or if there is a way to improve it
         accMag = np.sqrt(self.acc[0]**2 + self.acc[1]**2)
         accMax = 0.1
         self.acc = self.acc if accMag < accMax else self.acc/accMag * np.array([accMax,accMax])

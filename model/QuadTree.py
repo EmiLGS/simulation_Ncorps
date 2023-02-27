@@ -15,7 +15,7 @@ class Node():
         self.mass = None
 
     #si c'est une feuille(carré) on a besoin des points qu'elle contient 
-    def get_points(self):
+    def getBodies(self):
         return self.bodies
 
     def division(self):
@@ -106,7 +106,6 @@ class Node():
                 force = 0
                 for child in self.children:
                     force += child.computeForce(body,precision)
-                print(force)
                 return force
 
         a = otherBody.pos[0] - body.pos[0]
@@ -115,7 +114,6 @@ class Node():
 
         Vdir = np.array([a,b])
         force = ((GlobVar.G * otherBody.mass * body.mass)/d**3)*Vdir
-        print(force)
         return force
 
     def __str__(self):
@@ -140,7 +138,6 @@ class QuadTree():
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
-        print(self)
 
     def addBody(self,x,y):
         self.bodies.append(Body(x,y))

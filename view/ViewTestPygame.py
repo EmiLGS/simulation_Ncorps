@@ -163,7 +163,7 @@ class ViewTestPygame():
     def simulation(self, nbBodies = 50, mass = (5.9722*10**24) ):
         # Use simControllerulation specific.
         # sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
-        sim = BarnesHutSimulation(10,mass,self.width,self.height,precision=1)
+        sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:
 
