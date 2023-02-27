@@ -59,7 +59,6 @@ class ViewTestPygame():
         return(mass)
 
     def menu(self):
-        print(self.convertMassForDisplay(5.9722*10**24))
         while self.run_menu:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -191,7 +190,7 @@ class ViewTestPygame():
             self.window_surface.blit(self.background, (0, 0))
 
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), 5)
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass)*2)
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
@@ -262,7 +261,7 @@ class ViewTestPygame():
                             self.run_simulation = True
                             self.run_configurator = False
                             #! RAJOUTER UNE FONCTION DE TEST DES VALEURS (INTERVALLES, COHéRENCE ETC)
-                            self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
+                            self.simulation(int(input_number), mass = self.bodyMass(input_mass))
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
@@ -369,6 +368,6 @@ class ViewTestPygame():
             res += mass_val[i]
             i+=1
         while mass_val[j] != '*':
-            res2 += mass_val[j]
+            res2 = mass_val[j] + res2
             j -= 1
         return float(res) * 10 ** int(res2)
