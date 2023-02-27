@@ -1,16 +1,15 @@
 import numpy as np
 from model.Body import Body
 from random import randint
+from model.GlobVar import GlobVar
 
 class MoreBodiesSimulation():
-
-    G = 6.67*10**-11
 
     def __init__(self,bodyCount=3, mass=(5.9722*10**24), width=None, height=None):
         self.bodies = []
         self.bodyCount = bodyCount
         for _ in range(self.bodyCount):
-            self.bodies.append(Body(mass,randint(20,width-20),randint(20,height-20)))
+            self.bodies.append(Body(randint(20,width-20),randint(20,height-20), mass))
 
     def advance(self):
 
@@ -30,4 +29,4 @@ class MoreBodiesSimulation():
                 d = np.sqrt(a**2 + b**2)
 
                 Vdir = np.array([a,b])
-                body.addForce(((self.G*body.mass*otherBody.mass)/(d**3))*Vdir)
+                body.addForce(((GlobVar.G*body.mass*otherBody.mass)/(d**3))*Vdir)

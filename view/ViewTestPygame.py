@@ -8,6 +8,7 @@ from controller.BodySimulationController import BodySimulationController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
+from model.BarnesHutSimulation import BarnesHutSimulation
 import numpy as np
 
 class ViewTestPygame():
@@ -16,10 +17,10 @@ class ViewTestPygame():
 
         # Fonts
         pygame.font.init()
-        self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-regular.ttf", 15)
-        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-regular.ttf", 30)
-        self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-regular.ttf", 35)
-        self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-regular.ttf", 80)
+        self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 15)
+        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 30)
+        self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 35)
+        self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 80)
         pygame.font.get_fonts()
 
         # Windows parameters
@@ -161,7 +162,8 @@ class ViewTestPygame():
 
     def simulation(self, nbBodies = 50, mass = (5.9722*10**24) ):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+        # sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+        sim = BarnesHutSimulation(10,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:
 

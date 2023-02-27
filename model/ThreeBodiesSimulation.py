@@ -1,12 +1,10 @@
 import numpy as np
 from model.Body import Body
+from model.GlobVar import GlobVar
 
 class ThreeBodiesSimulation():
 
-    G = 6.67*10**-11
-
     def __init__(self,body1=None,body2=None,body3=None):
-        print(ThreeBodiesSimulation.G)
         self.body1 = body1 if body1 else Body(400,400)
         self.body2 = body2 if body2 else Body(200,200)
         self.body3 = body3 if body3 else Body(600,500)
@@ -36,4 +34,4 @@ class ThreeBodiesSimulation():
             d = np.sqrt(a**2 + b**2)
 
             Vdir = np.array([a,b])
-            body.addForce(((self.G*body.mass*targetBody.mass)/(d**3))*Vdir)
+            body.addForce(((GlobVar.G*body.mass*targetBody.mass)/(d**3))*Vdir)

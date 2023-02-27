@@ -1,7 +1,9 @@
 import cmath
 import numpy as np
 import random as random
-from Body import Body
+from model.Body import Body
+from model.GlobVar import GlobVar
+
 class Node():
     def __init__(self,x0,y0,width, bodies):
         self.x0 = x0
@@ -59,7 +61,6 @@ class Node():
                     child.insert(body)
         else:
             self.bodies.append(body)
-            print(len(self.bodies))
             if len(self.bodies)>1:
                 self.division()
     
@@ -83,27 +84,63 @@ class Node():
                 m += mChild
                 cm += mChild*cmChild
             cm /= m
+            self.mass = m
+            self.massCenter = cm
         return self.mass, self.massCenter
+    
+    def computeForce(self,body, precision):
+        #If we only have one body we calculate the force accordingly
+        if self.isLeaf():
+            if self.bodies[0] == body:
+                return 0
+            else:
+                otherBody = self.bodies[0]
+        #If we have more we have to check if we can approximate all those bodies as a single one
+        else:
+            r = np.sqrt((self.massCenter[0] - body.pos[0]) ** 2 + (self.massCenter[1] - body.pos[1]) ** 2)
+            D = self.w
+            if self.w/r < precision:
+                otherBody = Body(self.massCenter[0],self.massCenter[1],self.mass)
+            #else we just calculate the force in all the children independently
+            else:
+                force = 0
+                for child in self.children:
+                    force += child.computeForce(body,precision)
+                print(force)
+                return force
+
+        a = otherBody.pos[0] - body.pos[0]
+        b = otherBody.pos[1] - body.pos[1]
+        d = np.sqrt(a**2 + b**2)
+
+        Vdir = np.array([a,b])
+        force = ((GlobVar.G * otherBody.mass * body.mass)/d**3)*Vdir
+        print(force)
+        return force
 
     def __str__(self):
         res = ""
         res += "x = " + str(self.x0)
         res += "\ny = " + str(self.y0)
         res += "\nwidth = " + str(self.w)
-        res += "\nenfants :\n"
-        for child in self.children:
-            res += "\n"
-            for lign in str(child).split("\n"):
-                res += "  |  " + lign + "\n"
+        if self.isLeaf():
+            res += "\nbody : " + "[" + (", ").join(list(map(str,self.bodies))) + "]"
+        else:
+            res += "\nenfants :\n"
+            for child in self.children:
+                res += "\n"
+                for lign in str(child).split("\n"):
+                    res += "  |  " + lign + "\n"
         return res
 
 class QuadTree():
-    def __init__(self, bodies=[]):
+    def __init__(self, width, bodies=[]):
         self.bodies = []
-        self.node0 = Node(0,0,800,[])
+        self.node0 = Node(0,0,width,[])
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
+        print(self)
 
     def addBody(self,x,y):
         self.bodies.append(Body(x,y))
@@ -115,12 +152,14 @@ class QuadTree():
     def removeEmptyLeaves(self):
         self.node0.removeEmptyLeaves()
 
-    def comuteMasses(self):
-        self.node0.computeForce()
+    def computeMasses(self):
+        self.node0.computeMass()
     
-    def computeForce(self):
-        if self.isLeaf():
-            pass
+    def computeForce(self, body, precision):
+        return self.node0.computeForce(body, precision)
+    
+    def __str__(self):
+        return str(self.node0)
 
     def afficher(self):
         #quelques tests
@@ -128,9 +167,3 @@ class QuadTree():
         print(self.bodies[0].pos[0])
         # self.div()
         # print("node : ", self.node0.children[0].get_points()[0].x,",", self.node0.children[0].get_points()[0].y)
-
-
-
-q = QuadTree(1, [Body(10,10),Body(70,70),Body(105,2)])
-q.afficher()
-print(q.node0)
