@@ -1,12 +1,12 @@
 import numpy as np
 
 class Body():
-    def __init__(self, mass, x, y):
-        self.pos = np.array([x+0.1,y+0.1])
+    def __init__(self, x, y, mass=10**24):
+        self.pos = np.array([x,y])
         self.spd = np.array([0.0,0.0])
         self.acc = np.array([0.0,0.0])
         # MASSE TERRE = 5.9722*10**24
-        # MASSE MINIMAL = 10**11
+        # MASSE MINIMALE = 10**11
         self.mass = mass
         
 
@@ -22,3 +22,6 @@ class Body():
 
         #Add speed to position
         self.pos += self.spd
+
+    def __str__(self):
+        return "Body : x = " + str(self.pos[0]) + ", y = " + str(self.pos[1]) + ", mass = " + str(self.mass)
