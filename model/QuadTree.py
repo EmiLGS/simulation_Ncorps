@@ -138,6 +138,7 @@ class QuadTree():
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
+        print(self)
 
     def addBody(self,x,y):
         self.bodies.append(Body(x,y))
