@@ -53,8 +53,12 @@ class ViewTestPygame():
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
 
-    def menu(self):
+    def convertMassForDisplay(self, mass):
+        mass = mass / (10**24)
+        mass = round(mass)
+        return(mass)
 
+    def menu(self):
         while self.run_menu:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -190,7 +194,7 @@ class ViewTestPygame():
             self.window_surface.blit(self.background, (0, 0))
 
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]),5)
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
