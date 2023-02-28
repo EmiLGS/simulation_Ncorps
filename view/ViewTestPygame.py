@@ -10,7 +10,7 @@ from controller.BodySimulationController import BodySimulationController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
-import numpy as np
+from model.ImportBodiesSimulation import *
 
 class ViewTestPygame():
     def __init__(self):
@@ -160,9 +160,13 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.flip()
 
-    def simulation(self, nbBodies = 50, mass = (5.9722*10**24) ):
+    def simulation(self, file=None, nbBodies = 50, mass = (5.9722*10**24) ):
         # Use simControllerulation specific.
-        sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+        sim = None
+        if file == None:
+            sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+        else:
+            sim = ImportBodiesSimulation(file, len(file))
 
         while self.run_simulation:
 
@@ -217,6 +221,8 @@ class ViewTestPygame():
         self.rect_mass_outline = pygame.Rect(395,395,310,50)
         self.rect_import = pygame.Rect(self.button_posX,525,456,118)
 
+        file = None
+
         while self.run_configurator:
             self.window_surface.blit(self.background, (0, 0))
             
@@ -257,7 +263,10 @@ class ViewTestPygame():
                             self.run_simulation = True
                             self.run_configurator = False
                             #! RAJOUTER UNE FONCTION DE TEST DES VALEURS (INTERVALLES, COHéRENCE ETC)
-                            self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
+                            if(file == None):
+                                self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
+                            else:
+                                self.simulation(file, nbBodies = int(input_number), mass = self.bodyMass(input_mass))
                     #collide nb corps input
                     if self.rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
@@ -270,10 +279,10 @@ class ViewTestPygame():
                         active_mass = not active_mass
                     if self.rect_import.collidepoint((mouseX, mouseY)):
                         self.window_surface.blit(self.box_pressed, (self.button_posX,525))
-                        filename = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
-                        bodys = self.getBodyFromCSV(filename)
-                        for i in range(len(bodys)):
-                            print(bodys[i][0])
+                        file = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        file = self.getBodyFromCSV(file)
+                        for i in range(len(file)):
+                            print(file[i][0])
                         
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
@@ -343,14 +352,15 @@ class ViewTestPygame():
             # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
             row_count = sum(1 for row in obj)
-            tab = [0] * row_count
+            tab = [0] * (row_count-1)
 
         with open(file, 'r') as f:
             # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
             i = 0
             for ligne in obj:
-                tab[i] = ligne
+                if(i != 0):
+                    tab[i] = ligne
                 i += 1
         return tab
     
