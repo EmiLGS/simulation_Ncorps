@@ -53,11 +53,6 @@ class ViewTestPygame():
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
 
-    def convertMassForDisplay(self, mass):
-        mass = mass / (10**24)
-        mass = round(mass)
-        return(mass)
-
     def menu(self):
         while self.run_menu:
             # Get mouse position
@@ -73,10 +68,8 @@ class ViewTestPygame():
             rect_jouer = pygame.Rect(button_posX, button_posY, self.button_dim[0], self.button_dim[1])
             rect_notice = pygame.Rect(button_posX, button_posY + decalage_Y, self.button_dim[0], self.button_dim[1])
             rect_quitter = pygame.Rect(button_posX, button_posY + decalage_Y*2, self.button_dim[0], self.button_dim[1])
-
-            self.display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
            
-            # Animation when mouse hover button
+            # Animation when mouse hover a button
             # Play button 
             if not rect_jouer.collidepoint(mouseX, mouseY):
                 self.window_surface.blit(self.box_idle, (button_posX, button_posY))   
@@ -95,6 +88,10 @@ class ViewTestPygame():
             else:
                 self.window_surface.blit(self.box_pressed, (button_posX, button_posY + decalage_Y*2))
             
+
+            # Draw title
+            self.display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
+
             # Draw icons
             self.window_surface.blit(self.icon_play, (button_posX + 45, button_posY + 35))
             self.window_surface.blit(self.icon_notice, (button_posX + 45, button_posY + decalage_Y + 35))
@@ -159,13 +156,18 @@ class ViewTestPygame():
                         self.run_notice = False
                         self.menu()
 
+            # Draw background
             self.window_surface.blit(self.background, (0, 0))
+
+            # Draw text
             self.display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
+
+            # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.flip()
 
     def simulation(self, file=None, nbBodies = 50, mass = (5.9722*10**24) ):
-        # Use simControllerulation specific.
+        # Use a specific simulation
         sim = None
         if file == None:
             sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
@@ -173,7 +175,6 @@ class ViewTestPygame():
             sim = ImportBodiesSimulation(file, len(file))
 
         while self.run_simulation:
-
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
@@ -191,16 +192,20 @@ class ViewTestPygame():
                         self.run_simulation = False
                         self.configuration()
 
+            # Draw background
             self.window_surface.blit(self.background, (0, 0))
 
+            # Draw bodies
             for body in sim.bodies:
                 pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass))
             sim.advance()
 
+            # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
             pygame.display.update()
 
     def configuration(self):
+        # Variables
         active_nb = False
         active_mass = False
         can_run = False
@@ -215,21 +220,17 @@ class ViewTestPygame():
 
         self.button_posX = (self.width/2)-(self.button_dim[0]/2)
 
-        # Launch simulation
-        self.rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
-
-        # rectangle Input
-        self.rect_input = pygame.Rect(400,200,300,40)
-        self.rect_input_outline = pygame.Rect(395,195,310,50)
-        self.rect_mass = pygame.Rect(400,400,300,40)
-        self.rect_mass_outline = pygame.Rect(395,395,310,50)
-        self.rect_import = pygame.Rect(self.button_posX,525,456,118)
+        # Rectangles for collisions
+        rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
+        rect_input = pygame.Rect(400,200,300,40)
+        rect_input_outline = pygame.Rect(395,195,310,50)
+        rect_mass = pygame.Rect(400,400,300,40)
+        rect_mass_outline = pygame.Rect(395,395,310,50)
+        rect_import = pygame.Rect(self.button_posX,525,456,118)
 
         file = None
 
         while self.run_configurator:
-            self.window_surface.blit(self.background, (0, 0))
-            
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
@@ -249,6 +250,11 @@ class ViewTestPygame():
                 color2 = color_active
             else:
                 color2 = color_passive
+
+            if not rect_import.collidepoint(mouseX, mouseY):
+                self.window_surface.blit(self.box_idle, (self.button_posX,525))   
+            else:
+                self.window_surface.blit(self.box_pressed, (self.button_posX,525))
             
             # EVENT
             for event in pygame.event.get():
@@ -257,36 +263,39 @@ class ViewTestPygame():
                     pygame.quit()
                 # CLICK EVENT
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    # Return
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         self.run_menu = True
                         self.run_configurator = False
                         self.menu()
-                    # start simulation button
-                    if self.rect_jouer.collidepoint((mouseX,mouseY)):
+
+                    # Start simulation
+                    if rect_jouer.collidepoint((mouseX,mouseY)):
                         if(can_run):
                             self.run_simulation = True
                             self.run_configurator = False
-                            #! RAJOUTER UNE FONCTION DE TEST DES VALEURS (INTERVALLES, COHéRENCE ETC)
+
                             if(file == None):
                                 self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
                             else:
                                 self.simulation(file, nbBodies = int(input_number), mass = self.bodyMass(input_mass))
-                    #collide nb corps input
-                    if self.rect_input.collidepoint((mouseX,mouseY)):
+
+                    # Type text input nb
+                    if rect_input.collidepoint((mouseX,mouseY)):
                         if(active_mass == True):
                             active_mass = not active_mass
-                        active_nb = not active_nb      
-                    #Collide mass input
-                    if self.rect_mass.collidepoint((mouseX,mouseY)):
+                        active_nb = not active_nb 
+
+                    # Type text input mass
+                    if rect_mass.collidepoint((mouseX,mouseY)):
                         if(active_nb == True):
                             active_nb = not active_nb
                         active_mass = not active_mass
-                    if self.rect_import.collidepoint((mouseX, mouseY)):
-                        self.window_surface.blit(self.box_pressed, (self.button_posX,525))
+
+                    # Import file
+                    if rect_import.collidepoint((mouseX, mouseY)):
                         file = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
                         file = self.getBodyFromCSV(file)
-                        for i in range(len(file)):
-                            print(file[i][0])
                         
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
@@ -305,6 +314,9 @@ class ViewTestPygame():
                         else:
                             input_mass += event.unicode
 
+            # Draw background
+            self.window_surface.blit(self.background, (0, 0))
+
             # Draw import butotn
             self.window_surface.blit(self.box_idle, ((self.button_posX,525)))
 
@@ -312,27 +324,27 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
 
             # Draw play
-            self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))
-            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
+            self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))            
 
             # Display text on inputs
+            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
             self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
             self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
             self.display_text(self.window_surface, "Import", (self.button_posX + 225, 560), self.poppins_font_35, '#007AB5')
 
-            # Draw the rectangle
-            pygame.draw.rect( self.window_surface,"#007AB5", self.rect_input_outline)
-            pygame.draw.rect( self.window_surface, color1, self.rect_input)
-            pygame.draw.rect( self.window_surface, "#007AB5", self.rect_mass_outline)
-            pygame.draw.rect( self.window_surface, color2, self.rect_mass)
+            # Draw the rectangles
+            pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
+            pygame.draw.rect(self.window_surface, color1, rect_input)
+            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
+            pygame.draw.rect(self.window_surface, color2, rect_mass)
 
             # Apply text surface
-            self.display_text(self.window_surface, input_number, (self.rect_input.x, self.rect_input.y), self.poppins_font_30, 'black')
-            self.display_text(self.window_surface, input_mass, (self.rect_mass.x, self.rect_mass.y), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
+
             # Update the screen
             pygame.display.update()
 
-        # Display text
     def display_text(self, surface, text, pos, font, color):
         collection = [word.split(' ') for word in text.splitlines()]
         space = font.size(' ')[0]
@@ -352,14 +364,15 @@ class ViewTestPygame():
     def getBodyFromCSV(self, file):
         tab = []
         row_count = 0
+
+        # Défine size of the array
         with open(file, 'r') as f:
-            # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
             row_count = sum(1 for row in obj)
             tab = [0] * (row_count-1)
 
+        # Migrate data from csv to the array
         with open(file, 'r') as f:
-            # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
             i = -1
             for ligne in obj:
@@ -371,8 +384,13 @@ class ViewTestPygame():
             tab[i] = Body(tab[i][2], tab[i][0], tab[i][1])
         """   
         return tab
-    
-    # FUnction to return the correct float of the input mass field
+
+    def convertMassForDisplay(self, mass):
+        mass = mass / (10**24)
+        mass = round(mass)
+        return(mass)
+
+    # Fnctioun to return the correct float of the input mass field
     def bodyMass(self,mass_val):
         res = ''
         res2 = ''
