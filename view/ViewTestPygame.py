@@ -129,13 +129,30 @@ class ViewTestPygame():
                         sys.exit()
 
     def Notice(self):
-        f = open ("resultats","rb")
-        res = load (f)
+        f = open ("resultats","r")
+        print(f.read())
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
-                "- Nombres d'objets \n"
-                "- Masses minimums et maximums")
+                "- Nombres d'objets \n " +
+                "- Masses minimums et maximums \n" + f.read())
+
+        # Display text
+        def display_text(surface, text, pos, font, color):
+            collection = [word.split(' ') for word in text.splitlines()]
+            space = font.size(' ')[0]
+            x,y = pos
+            for lines in collection:
+                for words in lines:
+                    word_surface = font.render(words, True, color)
+                    word_width, word_height = word_surface.get_size()
+                    if x + word_width >= self.width:
+                        x = pos[0]
+                        y += word_height
+                    surface.blit(word_surface, (x,y))
+                    x += word_width + space
+                x = pos[0]
+                y += word_height
         
         while self.run_notice:
             # Get mouse position
@@ -180,8 +197,8 @@ class ViewTestPygame():
                     # Si clique sur bouton Retour
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
-                        f = open("resultats","wb")
-                        dump ("test", mouseX)
+                        f = open("resultats","w")
+                        f.write("tesst")
                         f.close()
                         self.run_configurator = True
                         self.run_simulation = False
