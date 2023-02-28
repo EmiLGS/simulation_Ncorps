@@ -9,7 +9,7 @@ class ImportBodiesSimulation():
     def __init__(self, file, bodyCount=None):
         self.bodies = []
         self.bodyCount = bodyCount if bodyCount else 3
-        for _ in range(file):
+        for _ in range(len(file)):
             self.bodies.append(Body(5.9722*10**24,file[_][0],file[_][1]))
 
     def advance(self):

@@ -2,7 +2,7 @@ import numpy as np
 
 class Body():
     def __init__(self, mass, x, y):
-        self.pos = np.array([x+0.1,y+0.1])
+        self.pos = np.array([float(x)+0.1,float(y)+0.1])
         self.spd = np.array([0.0,0.0])
         self.acc = np.array([0.0,0.0])
         # MASSE TERRE = 5.9722*10**24

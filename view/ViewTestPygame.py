@@ -357,9 +357,9 @@ class ViewTestPygame():
         with open(file, 'r') as f:
             # Créer un objet csv à partir du fichier
             obj = csv.reader(f)
-            i = 0
+            i = -1
             for ligne in obj:
-                if(i != 0):
+                if(i != -1):
                     tab[i] = ligne
                 i += 1
         return tab
@@ -374,6 +374,6 @@ class ViewTestPygame():
             res += mass_val[i]
             i+=1
         while mass_val[j] != '*':
-            res2 += mass_val[j]
+            res2 = mass_val[j] + res2
             j -= 1
         return float(res) * 10 ** int(res2)
