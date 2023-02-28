@@ -190,7 +190,7 @@ class ViewTestPygame():
             self.window_surface.blit(self.background, (0, 0))
 
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass)*2)
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
