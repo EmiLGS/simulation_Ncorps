@@ -362,6 +362,10 @@ class ViewTestPygame():
                 if(i != -1):
                     tab[i] = ligne
                 i += 1
+        """
+        for i in range(len(tab)):
+            tab[i] = Body(tab[i][2], tab[i][0], tab[i][1])
+        """   
         return tab
     
     # FUnction to return the correct float of the input mass field
