@@ -267,7 +267,7 @@ class ViewTestPygame():
             FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
             self.window_surface.blit(FPTsurf, (20,20))
             # Display title
-            self.display_text(self.window_surface, 'Statistic', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
+            self.display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
             # END PRINT FPT
             pygame.display.update()
 
