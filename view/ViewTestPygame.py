@@ -11,6 +11,8 @@ from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 import numpy as np
 
+from vendor.chart.FramePerTimeChart import FramePerTimeChart
+
 class ViewTestPygame():
     def __init__(self):
         pygame.init()
@@ -36,7 +38,8 @@ class ViewTestPygame():
         self.run_menu = True
         self.run_simulation = False
         self.run_notice = False
-        self.run_configurator = True
+        self.run_configurator = False 
+        self.run_statistic = False
 
         # Icons
         self.taille_return_icon = 512//11
@@ -46,12 +49,14 @@ class ViewTestPygame():
         self.button_dim = (456,118)
         self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
-
         n = 11
         self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
-
+        # NEXT
+        self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(512//n,512//n))
+        self.rect_next = pygame.Rect(self.taille_return_icon, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
+        
     def menu(self):
 
         while self.run_menu:
@@ -182,9 +187,16 @@ class ViewTestPygame():
         # Use simControllerulation specific.
         sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
 
+        cmpt = 0
+        data = [[],[]]
+        initTime = time.time()
         while self.run_simulation:
-
             # Get mouse position
+            cmpt += 1
+            # if cmpt % 20 == 0 :
+                # print(cmpt, time.time() - initTime)
+            data[0].append( round(time.time() - initTime, 3) )
+            data[1].append(cmpt)
             mouseX, mouseY = pygame.mouse.get_pos()
 
             for event in pygame.event.get():
@@ -195,7 +207,15 @@ class ViewTestPygame():
                 # Evenements lors du clique
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Si clique sur bouton Retour
-                    if self.rect_return.collidepoint((mouseX,mouseY)):
+                    if cmpt > 200 :
+                        if self.rect_return.collidepoint((mouseX,mouseY)):
+                            finishTime = time.time() - initTime
+                            print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
+                            self.run_statistic = True
+                            self.run_simulation = False
+                            self.statistic(data)
+
+                    if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Lancer l'ecran
                         f = open("resultats","w")
                         f.write("tesst")
@@ -210,7 +230,45 @@ class ViewTestPygame():
                 pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]),5)
             sim.advance()
 
-            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+            self.window_surface.blit(self.icon_return, ((self.taille_return_icon, 800-self.taille_return_icon-25)))
+            if cmpt > 200 :
+                self.window_surface.blit(self.icon_next, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+            pygame.display.update()
+    
+    def statistic(self,data):
+        # Define here Chart from vendor\Chart
+        # FramePerTimeChart
+        FPT = FramePerTimeChart(data[0],data[1])
+        printFPT = FPT.printChart()
+        FPTraw_data = printFPT[0]
+        FPTcanvas = printFPT[1]
+        # END FramePerTimeChart
+        # END CHART
+        while self.run_statistic:
+            # Get mouse position
+            mouseX, mouseY = pygame.mouse.get_pos()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.run_statistic = False
+                    pygame.quit()
+
+                # Evenements lors du clique
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # Si clique sur bouton Retour
+                    if self.rect_next.collidepoint((mouseX,mouseY)):
+                        self.run_menu = True
+                        self.run_statistic = False
+                        self.menu()
+            self.window_surface.blit(self.background, (0, 0))
+            self.window_surface.blit(self.icon_return, ((self.taille_return_icon, 800-self.taille_return_icon-25)))
+            # PRINT FPT
+            FPTsize = FPTcanvas.get_width_height()
+            FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
+            self.window_surface.blit(FPTsurf, (20,20))
+            # Display title
+            self.display_text(self.window_surface, 'Statistic', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
+            # END PRINT FPT
             pygame.display.update()
 
     def configuration(self):
