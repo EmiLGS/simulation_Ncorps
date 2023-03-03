@@ -109,6 +109,7 @@ class ViewTestPygame():
                 if event.type == pygame.QUIT:
                     self.run_notice = False
                     pygame.quit()
+                    sys.exit()
 
                 # Event when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -134,7 +135,7 @@ class ViewTestPygame():
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
                 "Paramètres : \n" +
-                "- Nombres d'objets \n" +
+                "- Nombres de corps \n" +
                 "- Masses minimums et maximums \n")
         
         while self.run_notice:
@@ -146,6 +147,7 @@ class ViewTestPygame():
                 if event.type == pygame.QUIT:
                     self.run_notice = False
                     pygame.quit()
+                    sys.exit()
                 
                 # Events when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -182,6 +184,7 @@ class ViewTestPygame():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
                     pygame.quit()
+                    sys.exit()
                 
                 # Evenements lors du clique
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -261,6 +264,7 @@ class ViewTestPygame():
                 if event.type == pygame.QUIT:
                     self.run_configurator = False
                     pygame.quit()
+                    sys.exit()
                 # CLICK EVENT
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Return
@@ -379,10 +383,7 @@ class ViewTestPygame():
                 if(i != -1):
                     tab[i] = ligne
                 i += 1
-        """
-        for i in range(len(tab)):
-            tab[i] = Body(tab[i][2], tab[i][0], tab[i][1])
-        """   
+                   
         return tab
 
     def convertMassForDisplay(self, mass):
