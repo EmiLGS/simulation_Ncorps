@@ -7,17 +7,18 @@ from time import sleep
 from decimal import Decimal
 from tkinter import filedialog
 from controller.BodySimulationController import BodySimulationController
+from controller.VerifyController import VerifyController
 from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from model.ImportBodiesSimulation import *
-
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
 
 class ViewTestPygame():
     def __init__(self):
         pygame.init()
 
+        
         # Fonts
         pygame.font.init()
         self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-regular.ttf", 15)
@@ -29,6 +30,10 @@ class ViewTestPygame():
         # Windows parameters
         self.width = 1200
         self.height = 800
+
+        # Controller
+        print(VerifyController((self.width, self.height)).verifyNb(1))
+
 
         pygame.display.set_caption('Ncorps')
         self.window_surface = pygame.display.set_mode((self.width, self.height))
@@ -139,10 +144,11 @@ class ViewTestPygame():
     def Notice(self):
         text = ("Enoncé : \n" + 
                 "Le problème à N corps est un problème de mécanique newtonienne où plusieurs corps se déplacent dans l'espace en étant soumis à leur propre inertie et l'attraction des autres corps.\n" +
-                "Paramètres : \n" +
+                "Configuration : \n" +
                 "- Nombres de corps \n" +
-                "- Masses minimums et maximums \n")
-        
+                "- Masses minimums et maximums \n" +
+                "- Import : vous pouvez importer directement des corps avec des caractéristiques précises par le biais d'un tableau excel. Pour ce faire il vous suffit de télécharger le modèle de fichier excel fournit sur le menu de configuration, le remplir avec vos informations puis le fournir en cliquant sur le bouton import.")
+
         while self.run_notice:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -295,11 +301,12 @@ class ViewTestPygame():
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
-            # Check if parameters have been given
-            if(input_number != '' and input_mass != ''):
-                can_run = True
-            else:
+            controller = VerifyController((800,1200))
+
+            if(controller.verifyInput(input_number, input_mass) == False or controller.verifyNb(input_number) == False):
                 can_run = False
+            else:
+                can_run = True
 
             # Check state input
             if(active_nb):
@@ -371,10 +378,11 @@ class ViewTestPygame():
                     # Unicode standard is used for string
                     # formation
                     else:
-                        if(active_nb):       
-                            input_number += event.unicode
-                        else:
-                            input_mass += event.unicode
+                        if event.unicode.isdigit():
+                            if(active_nb):       
+                                input_number += event.unicode
+                            else:
+                                input_mass += event.unicode
 
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
@@ -422,27 +430,6 @@ class ViewTestPygame():
                 x += word_width + space
             x = pos[0]
             y += word_height
-    
-    def getBodyFromCSV(self, file):
-        tab = []
-        row_count = 0
-
-        # Défine size of the array
-        with open(file, 'r') as f:
-            obj = csv.reader(f)
-            row_count = sum(1 for row in obj)
-            tab = [0] * (row_count-1)
-
-        # Migrate data from csv to the array
-        with open(file, 'r') as f:
-            obj = csv.reader(f)
-            i = -1
-            for ligne in obj:
-                if(i != -1):
-                    tab[i] = ligne
-                i += 1
-
-        return tab
 
     def convertMassForDisplay(self, mass):
         mass = mass / (10**24)
