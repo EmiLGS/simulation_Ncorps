@@ -1,7 +1,6 @@
 
 import time
 import pygame, sys
-import csv
 
 from time import sleep
 from decimal import Decimal
@@ -55,6 +54,7 @@ class ViewTestPygame():
         self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
+        self.icon_import = pygame.transform.scale(pygame.image.load("./assets/picture/import.png"),(512//n,512//n))
         # NEXT
         self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(512//n,512//n))
         self.rect_next = pygame.Rect(self.taille_return_icon, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
@@ -248,6 +248,7 @@ class ViewTestPygame():
                 if event.type == pygame.QUIT:
                     self.run_statistic = False
                     pygame.quit()
+                    sys.exit()
 
                 # Evenements lors du clique
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -299,6 +300,9 @@ class ViewTestPygame():
 
             controller = VerifyController((800,1200))
 
+            # Draw background
+            self.window_surface.blit(self.background, (0, 0))
+
             if(controller.verifyInput(input_number, input_mass) == False or controller.verifyNb(input_number) == False):
                 can_run = False
             else:
@@ -319,6 +323,31 @@ class ViewTestPygame():
                 self.window_surface.blit(self.box_idle, (self.button_posX,525))   
             else:
                 self.window_surface.blit(self.box_pressed, (self.button_posX,525))
+
+            # Draw icon return
+            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+
+            # Draw play
+            self.window_surface.blit(self.icon_play, (self.width//1.8, 700 ))
+
+            # Draw icon import
+            self.window_surface.blit(self.icon_import, (self.button_posX + 45, 525 + 35))         
+
+            # Display text on inputs
+            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
+            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface, "Import", (self.button_posX + 225, 560), self.poppins_font_35, '#007AB5')
+
+            # Draw the rectangles
+            pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
+            pygame.draw.rect(self.window_surface, color1, rect_input)
+            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
+            pygame.draw.rect(self.window_surface, color2, rect_mass)
+
+            # Apply text surface
+            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
             
             # EVENT
             for event in pygame.event.get():
@@ -360,7 +389,11 @@ class ViewTestPygame():
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
                         file = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
-                        file = self.getBodyFromCSV(file)
+                        if(controller.verifyImport(file) == False):
+                            file = None
+                        else:
+                            file = controller.getBodyFromCSV(file)
+                        
                         
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
@@ -379,34 +412,6 @@ class ViewTestPygame():
                                 input_number += event.unicode
                             else:
                                 input_mass += event.unicode
-
-            # Draw background
-            self.window_surface.blit(self.background, (0, 0))
-
-            # Draw import butotn
-            self.window_surface.blit(self.box_idle, ((self.button_posX,525)))
-
-            # Draw icon return
-            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
-
-            # Draw play
-            self.window_surface.blit(self.icon_play, ( self.width//1.8, 700 ))            
-
-            # Display text on inputs
-            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
-            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface, "Import", (self.button_posX + 225, 560), self.poppins_font_35, '#007AB5')
-
-            # Draw the rectangles
-            pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
-            pygame.draw.rect(self.window_surface, color1, rect_input)
-            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
-            pygame.draw.rect(self.window_surface, color2, rect_mass)
-
-            # Apply text surface
-            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
-            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
 
             # Update the screen
             pygame.display.update()

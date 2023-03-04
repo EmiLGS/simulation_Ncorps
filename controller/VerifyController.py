@@ -1,3 +1,4 @@
+import csv
 
 class VerifyController():
     def __init__(self, window):
@@ -14,7 +15,7 @@ class VerifyController():
         return(input_number != '' and input_mass != '') 
 
     def verifyImport(self, file):
-        tab = getBodyFromCSV(file)
+        tab = self.getBodyFromCSV(file)
 
         # Verify size
         if(len(tab) < 2 and len(tab) > 200):
@@ -23,9 +24,9 @@ class VerifyController():
         # Verify position of each objects
         for i in range(len(tab)):
             for j in range(len(tab[i])):
-                if(tab[i][0] < 0 and tab[i][0] > self.window[0]):
+                if(int(tab[i][0]) < 0 and int(tab[i][0]) > self.window[0]):
                     return False  
-                if(tab[i][1] < 0 and tab[i][1] > self.window[1]):
+                if(int(tab[i][1]) < 0 and int(tab[i][1]) > self.window[1]):
                     return False  
         
         return True
