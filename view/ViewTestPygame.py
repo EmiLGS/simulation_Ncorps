@@ -31,10 +31,6 @@ class ViewTestPygame():
         self.width = 1200
         self.height = 800
 
-        # Controller
-        print(VerifyController((self.width, self.height)).verifyNb(1))
-
-
         pygame.display.set_caption('Ncorps')
         self.window_surface = pygame.display.set_mode((self.width, self.height))
         self.background = pygame.Surface((1200, 800))
