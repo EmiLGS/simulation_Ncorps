@@ -17,7 +17,6 @@ class ViewTestPygame():
     def __init__(self):
         pygame.init()
 
-        
         # Fonts
         pygame.font.init()
         self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-regular.ttf", 15)
@@ -50,11 +49,18 @@ class ViewTestPygame():
         self.button_dim = (456,118)
         self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
+        self.box_idle_correct = pygame.transform.scale(pygame.image.load("./assets/picture/button_correct.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed_correct = pygame.transform.scale(pygame.image.load("./assets/picture/button_down_correct.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_idle_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
+        self.box_pressed_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_down_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
         n = 11
         self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
         self.icon_import = pygame.transform.scale(pygame.image.load("./assets/picture/import.png"),(512//n,512//n))
+        self.icon_import_correct = pygame.transform.scale(pygame.image.load("./assets/picture/import_correct.png"),(512//n,512//n))
+        self.icon_import_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/import_incorrect.png"),(512//n,512//n))
+        self.icon_trash = pygame.transform.scale(pygame.image.load("./assets/picture/poubelle.png"),(512//n,512//n))
         # NEXT
         self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(512//n,512//n))
         self.rect_next = pygame.Rect(self.taille_return_icon, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
@@ -257,6 +263,7 @@ class ViewTestPygame():
                         self.run_menu = True
                         self.run_statistic = False
                         self.menu()
+
             self.window_surface.blit(self.background, (0, 0))
             self.window_surface.blit(self.icon_return, ((self.taille_return_icon, 800-self.taille_return_icon-25)))
             # PRINT FPT
@@ -272,6 +279,8 @@ class ViewTestPygame():
         # Variables
         active_nb = False
         active_mass = False
+        active_import = False
+        error = None
         can_run = False
         color_active = pygame.Color(180, 180, 180)
         color_passive = pygame.Color(230, 230, 230)
@@ -286,11 +295,12 @@ class ViewTestPygame():
 
         # Rectangles for collisions
         rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
-        rect_input = pygame.Rect(400,200,300,40)
-        rect_input_outline = pygame.Rect(395,195,310,50)
-        rect_mass = pygame.Rect(400,400,300,40)
-        rect_mass_outline = pygame.Rect(395,395,310,50)
-        rect_import = pygame.Rect(self.button_posX,525,456,118)
+        rect_input = pygame.Rect(400,125,300,40)
+        rect_input_outline = pygame.Rect(395,120,310,50)
+        rect_mass = pygame.Rect(400,325,300,40)
+        rect_mass_outline = pygame.Rect(395,320,310,50)
+        rect_import = pygame.Rect(self.button_posX,500,456,118)
+        rect_trash = pygame.Rect(self.button_posX + self.button_dim[0] + 25, 500 + 35, self.taille_return_icon, self.taille_return_icon)
 
         file = None
 
@@ -303,6 +313,7 @@ class ViewTestPygame():
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
 
+            # Verify inputs
             if(controller.verifyInput(input_number, input_mass) == False or controller.verifyNb(input_number) == False):
                 can_run = False
             else:
@@ -319,36 +330,6 @@ class ViewTestPygame():
             else:
                 color2 = color_passive
 
-            if not rect_import.collidepoint(mouseX, mouseY):
-                self.window_surface.blit(self.box_idle, (self.button_posX,525))   
-            else:
-                self.window_surface.blit(self.box_pressed, (self.button_posX,525))
-
-            # Draw icon return
-            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
-
-            # Draw play
-            self.window_surface.blit(self.icon_play, (self.width//1.8, 700 ))
-
-            # Draw icon import
-            self.window_surface.blit(self.icon_import, (self.button_posX + 45, 525 + 35))         
-
-            # Display text on inputs
-            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
-            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,150),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,350),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface, "Import", (self.button_posX + 225, 560), self.poppins_font_35, '#007AB5')
-
-            # Draw the rectangles
-            pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
-            pygame.draw.rect(self.window_surface, color1, rect_input)
-            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
-            pygame.draw.rect(self.window_surface, color2, rect_mass)
-
-            # Apply text surface
-            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
-            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
-            
             # EVENT
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -386,14 +367,21 @@ class ViewTestPygame():
                             active_nb = not active_nb
                         active_mass = not active_mass
 
+                    self.display_text(self.window_surface, "Fichier incorrect", (self.button_posX, 410), self.poppins_font_30, '#D10000')
+
+                    if rect_trash.collidepoint((mouseX,mouseY)):
+                        file = None
+                        error = None
+
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
                         file = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
                         if(controller.verifyImport(file) == False):
+                            error = True
                             file = None
                         else:
+                            error = False
                             file = controller.getBodyFromCSV(file)
-                        
                         
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
@@ -412,6 +400,56 @@ class ViewTestPygame():
                                 input_number += event.unicode
                             else:
                                 input_mass += event.unicode
+
+            # Draw icon return
+            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+
+            # Draw play
+            self.window_surface.blit(self.icon_play, (self.width//1.8, 700))       
+
+            # Display text on inputs
+            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
+            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,75),self.poppins_font_30,'#007AB5')
+            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,275),self.poppins_font_30,'#007AB5')
+            
+            # Draw the rectangles
+            pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
+            pygame.draw.rect(self.window_surface, color1, rect_input)
+            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
+            pygame.draw.rect(self.window_surface, color2, rect_mass)
+
+            # Apply text surface
+            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
+            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
+            
+            # Animation hover import button
+            if not rect_import.collidepoint(mouseX, mouseY):
+                if(error == True):
+                    self.window_surface.blit(self.box_idle_incorrect, (self.button_posX,500))
+                elif(error == False):
+                    self.window_surface.blit(self.box_idle_correct, (self.button_posX,500))
+                else:
+                    self.window_surface.blit(self.box_idle, (self.button_posX,500))   
+            else:
+                if(error == True):
+                    self.window_surface.blit(self.box_pressed_incorrect, (self.button_posX,500))
+                elif(error == False):
+                    self.window_surface.blit(self.box_pressed_correct, (self.button_posX,500))
+                else:
+                    self.window_surface.blit(self.box_pressed, (self.button_posX,500))
+            
+            if(error == True):
+                self.display_text(self.window_surface, "Fichier incorrect", (self.button_posX + 125, 450), self.poppins_font_30, '#D10000')
+                self.window_surface.blit(self.icon_import_incorrect, (self.button_posX + 45, 500 + 35))  
+                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#D10000')
+            elif(error == False):
+                self.display_text(self.window_surface, "Fichier importé", (self.button_posX + 125, 450), self.poppins_font_30, '#10CA00')
+                self.window_surface.blit(self.icon_import_correct, (self.button_posX + 45, 500 + 35))  
+                self.window_surface.blit(self.icon_trash, (self.button_posX + self.button_dim[0] + 25, 500 + 35))
+                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#10CA00')
+            else:
+                self.window_surface.blit(self.icon_import, (self.button_posX + 45, 500 + 35))  
+                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#007AB5')
 
             # Update the screen
             pygame.display.update()
