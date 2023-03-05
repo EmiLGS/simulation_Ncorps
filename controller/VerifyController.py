@@ -26,7 +26,7 @@ class VerifyController():
             if(int(tab[i][0]) < 0 or int(tab[i][0]) > self.window[0]):
                 return False  
             if(int(tab[i][1]) < 0 or int(tab[i][1]) > self.window[1]):
-                return False 
+                return False
         
         return True
     

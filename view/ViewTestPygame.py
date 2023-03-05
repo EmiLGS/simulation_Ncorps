@@ -5,12 +5,10 @@ import pygame, sys
 from time import sleep
 from decimal import Decimal
 from tkinter import filedialog
-from controller.BodySimulationController import BodySimulationController
 from controller.VerifyController import VerifyController
-from model.ThreeBodiesSimulation import ThreeBodiesSimulation
-from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from model.ImportBodiesSimulation import *
+from controller.Utilities import Utilities
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
 
 class ViewTestPygame():
@@ -102,7 +100,7 @@ class ViewTestPygame():
             
 
             # Draw title
-            self.display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
+            Utilities().display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
 
             # Draw icons
             self.window_surface.blit(self.icon_play, (button_posX + 45, button_posY + 35))
@@ -110,9 +108,9 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_exit, (button_posX + 45, button_posY + decalage_Y*2 + 35))
 
             # Draw Buttons texts
-            self.display_text(self.window_surface, 'Jouer', (600, button_posY + 35), self.poppins_font_35, '#007AB5')
-            self.display_text(self.window_surface, 'Notice', (600, button_posY + decalage_Y + 35), self.poppins_font_35, '#007AB5')
-            self.display_text(self.window_surface, 'Quitter', (595, button_posY + decalage_Y*2 + 35), self.poppins_font_35, '#007AB5')
+            Utilities().display_text(self.window_surface, 'Jouer', (600, button_posY + 35), self.poppins_font_35, '#007AB5')
+            Utilities().display_text(self.window_surface, 'Notice', (600, button_posY + decalage_Y + 35), self.poppins_font_35, '#007AB5')
+            Utilities().display_text(self.window_surface, 'Quitter', (595, button_posY + decalage_Y*2 + 35), self.poppins_font_35, '#007AB5')
 
             pygame.display.flip()
 
@@ -175,7 +173,7 @@ class ViewTestPygame():
             self.window_surface.blit(self.background, (0, 0))
 
             # Draw text
-            self.display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
+            Utilities().display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
 
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
@@ -229,7 +227,7 @@ class ViewTestPygame():
 
             # Draw bodies
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass))
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), Utilities().convertMassForDisplay(body.mass))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
@@ -271,7 +269,7 @@ class ViewTestPygame():
             FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
             self.window_surface.blit(FPTsurf, (20,20))
             # Display title
-            self.display_text(self.window_surface, 'Statistic', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
+            Utilities().display_text(self.window_surface, 'Statistic', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
             # END PRINT FPT
             pygame.display.update()
 
@@ -279,7 +277,6 @@ class ViewTestPygame():
         # Variables
         active_nb = False
         active_mass = False
-        active_import = False
         error = None
         can_run = False
         color_active = pygame.Color(180, 180, 180)
@@ -351,9 +348,9 @@ class ViewTestPygame():
                             self.run_configurator = False
 
                             if(file == None):
-                                self.simulation(nbBodies = int(input_number), mass = self.bodyMass(input_mass))
+                                self.simulation(nbBodies = int(input_number), mass = Utilities().bodyMass(input_mass))
                             else:
-                                self.simulation(file, nbBodies = int(input_number), mass = self.bodyMass(input_mass))
+                                self.simulation(file, nbBodies = int(input_number), mass = Utilities().bodyMass(input_mass))
 
                     # Type text input nb
                     if rect_input.collidepoint((mouseX,mouseY)):
@@ -367,7 +364,7 @@ class ViewTestPygame():
                             active_nb = not active_nb
                         active_mass = not active_mass
 
-                    self.display_text(self.window_surface, "Fichier incorrect", (self.button_posX, 410), self.poppins_font_30, '#D10000')
+                    Utilities().display_text(self.window_surface, "Fichier incorrect", (self.button_posX, 410), self.poppins_font_30, '#D10000')
 
                     if rect_trash.collidepoint((mouseX,mouseY)):
                         file = None
@@ -408,9 +405,9 @@ class ViewTestPygame():
             self.window_surface.blit(self.icon_play, (self.width//1.8, 700))       
 
             # Display text on inputs
-            self.display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
-            self.display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,75),self.poppins_font_30,'#007AB5')
-            self.display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,275),self.poppins_font_30,'#007AB5')
+            Utilities().display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
+            Utilities().display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,75),self.poppins_font_30,'#007AB5')
+            Utilities().display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,275),self.poppins_font_30,'#007AB5')
             
             # Draw the rectangles
             pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
@@ -419,8 +416,8 @@ class ViewTestPygame():
             pygame.draw.rect(self.window_surface, color2, rect_mass)
 
             # Apply text surface
-            self.display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
-            self.display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
+            Utilities().display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
+            Utilities().display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
             
             # Animation hover import button
             if not rect_import.collidepoint(mouseX, mouseY):
@@ -438,53 +435,21 @@ class ViewTestPygame():
                 else:
                     self.window_surface.blit(self.box_pressed, (self.button_posX,500))
             
+            # Graphics for import error
             if(error == True):
-                self.display_text(self.window_surface, "Fichier incorrect", (self.button_posX + 125, 450), self.poppins_font_30, '#D10000')
+                Utilities().display_text(self.window_surface, "Fichier incorrect", (self.button_posX + 125, 450), self.poppins_font_30, '#D10000')
                 self.window_surface.blit(self.icon_import_incorrect, (self.button_posX + 45, 500 + 35))  
-                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#D10000')
+                Utilities().display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#D10000')
             elif(error == False):
-                self.display_text(self.window_surface, "Fichier importé", (self.button_posX + 125, 450), self.poppins_font_30, '#10CA00')
+                Utilities().display_text(self.window_surface, "Fichier importé", (self.button_posX + 125, 450), self.poppins_font_30, '#10CA00')
                 self.window_surface.blit(self.icon_import_correct, (self.button_posX + 45, 500 + 35))  
                 self.window_surface.blit(self.icon_trash, (self.button_posX + self.button_dim[0] + 25, 500 + 35))
-                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#10CA00')
+                Utilities().display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#10CA00')
             else:
                 self.window_surface.blit(self.icon_import, (self.button_posX + 45, 500 + 35))  
-                self.display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#007AB5')
+                Utilities().display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#007AB5')
 
             # Update the screen
             pygame.display.update()
 
-    def display_text(self, surface, text, pos, font, color):
-        collection = [word.split(' ') for word in text.splitlines()]
-        space = font.size(' ')[0]
-        x,y = pos
-        for lines in collection:
-            for words in lines:
-                word_surface = font.render(words, True, color)
-                word_width, word_height = word_surface.get_size()
-                if x + word_width >= self.width:
-                    x = pos[0]
-                    y += word_height
-                surface.blit(word_surface, (x,y))
-                x += word_width + space
-            x = pos[0]
-            y += word_height
-
-    def convertMassForDisplay(self, mass):
-        mass = mass / (10**24)
-        mass = round(mass)
-        return(mass)
-
-    # Fnctioun to return the correct float of the input mass field
-    def bodyMass(self,mass_val):
-        res = ''
-        res2 = ''
-        i = 0
-        j = -1
-        while (mass_val[i]) in ['1','2','3','4','5','6','7','8','9','.']:
-            res += mass_val[i]
-            i+=1
-        while mass_val[j] != '*':
-            res2 = mass_val[j] + res2
-            j -= 1
-        return float(res) * 10 ** int(res2)
+    
