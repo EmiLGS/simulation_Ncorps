@@ -21,7 +21,6 @@ class ViewTestPygame():
         self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-regular.ttf", 30)
         self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-regular.ttf", 35)
         self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-regular.ttf", 80)
-        pygame.font.get_fonts()
 
         # Windows parameters
         self.width = 1200
@@ -38,12 +37,8 @@ class ViewTestPygame():
         self.run_notice = False
         self.run_configurator = False 
         self.run_statistic = False
-
-        # Icons
-        self.icons_size = 512//11
-        self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
-        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.icons_size,self.icons_size))
-
+        
+        # Buttons
         self.button_dim = (456,118)
         self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
@@ -52,6 +47,9 @@ class ViewTestPygame():
         self.box_idle_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_down_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
   
+        # Icons
+        self.icons_size = 512//11
+        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.icons_size,self.icons_size))
         self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(self.icons_size,self.icons_size))
         self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(self.icons_size,self.icons_size))
         self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(self.icons_size,self.icons_size))
@@ -59,9 +57,11 @@ class ViewTestPygame():
         self.icon_import_correct = pygame.transform.scale(pygame.image.load("./assets/picture/import_correct.png"),(self.icons_size,self.icons_size))
         self.icon_import_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/import_incorrect.png"),(self.icons_size,self.icons_size))
         self.icon_trash = pygame.transform.scale(pygame.image.load("./assets/picture/poubelle.png"),(self.icons_size,self.icons_size))
-        # NEXT
         self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(self.icons_size,self.icons_size))
+        
+        # Rects
         self.rect_next = pygame.Rect(self.icons_size, 800-self.icons_size-25, self.icons_size, self.icons_size)
+        self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
         
     def menu(self):
         while self.run_menu:
@@ -78,7 +78,10 @@ class ViewTestPygame():
             rect_jouer = pygame.Rect(button_posX, button_posY, self.button_dim[0], self.button_dim[1])
             rect_notice = pygame.Rect(button_posX, button_posY + decalage_Y, self.button_dim[0], self.button_dim[1])
             rect_quitter = pygame.Rect(button_posX, button_posY + decalage_Y*2, self.button_dim[0], self.button_dim[1])
-           
+            
+            # Draw title
+            Utilities().display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
+
             # Animation when mouse hover a button
             # Play button 
             if not rect_jouer.collidepoint(mouseX, mouseY):
@@ -97,10 +100,6 @@ class ViewTestPygame():
                 self.window_surface.blit(self.box_idle, (button_posX, button_posY + decalage_Y*2))
             else:
                 self.window_surface.blit(self.box_pressed, (button_posX, button_posY + decalage_Y*2))
-            
-
-            # Draw title
-            Utilities().display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
 
             # Draw icons
             self.window_surface.blit(self.icon_play, (button_posX + 45, button_posY + 35))
@@ -111,8 +110,6 @@ class ViewTestPygame():
             Utilities().display_text(self.window_surface, 'Jouer', (600, button_posY + 35), self.poppins_font_35, '#007AB5')
             Utilities().display_text(self.window_surface, 'Notice', (600, button_posY + decalage_Y + 35), self.poppins_font_35, '#007AB5')
             Utilities().display_text(self.window_surface, 'Quitter', (595, button_posY + decalage_Y*2 + 35), self.poppins_font_35, '#007AB5')
-
-            pygame.display.flip()
 
             for event in pygame.event.get():
                 # Exit
@@ -140,6 +137,9 @@ class ViewTestPygame():
                     # Click on Quit
                     if rect_quitter.collidepoint((mouseX,mouseY)):
                         sys.exit()
+            
+            
+            pygame.display.flip()
 
     def Notice(self):
         text = ("Enoncé : \n" + 
@@ -153,6 +153,15 @@ class ViewTestPygame():
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
+            # Draw background
+            self.window_surface.blit(self.background, (0, 0))
+
+            # Draw text
+            Utilities().display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
+
+            # Draw icon return
+            self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
+
             for event in pygame.event.get():
                 # Exit
                 if event.type == pygame.QUIT:
@@ -162,21 +171,13 @@ class ViewTestPygame():
                 
                 # Events when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Click on Play
+                    # Click on return
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         # Run the screen
                         self.run_menu = True
                         self.run_notice = False
                         self.menu()
 
-            # Draw background
-            self.window_surface.blit(self.background, (0, 0))
-
-            # Draw text
-            Utilities().display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
-
-            # Draw icon return
-            self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
             pygame.display.flip()
 
     def simulation(self, file=None, nbBodies = 50, mass = (5.9722*10**24) ):
@@ -190,11 +191,10 @@ class ViewTestPygame():
         cmpt = 0
         data = [[],[]]
         initTime = time.time()
+
         while self.run_simulation:
             # Get mouse position
             cmpt += 1
-            # if cmpt % 20 == 0 :
-                # print(cmpt, time.time() - initTime)
             data[0].append( round(time.time() - initTime, 3) )
             data[1].append(cmpt)
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -205,9 +205,9 @@ class ViewTestPygame():
                     pygame.quit()
                     sys.exit()
                 
-                # Evenements lors du clique
+                # Events when click
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Si clique sur bouton Retour
+                    # Click on return
                     if cmpt > 200 :
                         if self.rect_return.collidepoint((mouseX,mouseY)):
                             finishTime = time.time() - initTime
@@ -217,7 +217,7 @@ class ViewTestPygame():
                             self.statistic(data)
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
-                        # Lancer l'ecran
+                        # Run screen
                         self.run_configurator = True
                         self.run_simulation = False
                         self.configuration()
@@ -231,8 +231,11 @@ class ViewTestPygame():
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
+
+            # Draw next icon
             if cmpt > 200 :
                 self.window_surface.blit(self.icon_next, ((1200-self.icons_size-25, 800-self.icons_size-25)))
+
             pygame.display.update()
     
     def statistic(self,data):
@@ -244,9 +247,21 @@ class ViewTestPygame():
         FPTcanvas = printFPT[1]
         # END FramePerTimeChart
         # END CHART
+
         while self.run_statistic:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
+
+            self.window_surface.blit(self.background, (0, 0))
+            self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
+
+            # PRINT FPT
+            FPTsize = FPTcanvas.get_width_height()
+            FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
+            self.window_surface.blit(FPTsurf, (20,20))
+
+            # Display title
+            Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -262,15 +277,6 @@ class ViewTestPygame():
                         self.run_statistic = False
                         self.menu()
 
-            self.window_surface.blit(self.background, (0, 0))
-            self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
-            # PRINT FPT
-            FPTsize = FPTcanvas.get_width_height()
-            FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
-            self.window_surface.blit(FPTsurf, (20,20))
-            # Display title
-            Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
-            # END PRINT FPT
             pygame.display.update()
 
     def configuration(self):
@@ -281,8 +287,8 @@ class ViewTestPygame():
         can_run = False
         color_active = pygame.Color(180, 180, 180)
         color_passive = pygame.Color(230, 230, 230)
-        color1 = color_passive
-        color2 = color_passive
+        color_nb = color_passive
+        color_mass = color_passive
 
         # Input Value
         input_number = '50'
@@ -318,14 +324,11 @@ class ViewTestPygame():
 
             # Check state input
             if(active_nb):
-                color1 = color_active
+                color_nb = color_active
+                color_mass = color_passive
             else:
-                color1 = color_passive
-            
-            if(active_mass):
-                color2 = color_active
-            else:
-                color2 = color_passive
+                color_nb = color_passive
+                color_mass = color_active           
 
             # EVENT
             for event in pygame.event.get():
@@ -411,9 +414,9 @@ class ViewTestPygame():
             
             # Draw the rectangles
             pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
-            pygame.draw.rect(self.window_surface, color1, rect_input)
+            pygame.draw.rect(self.window_surface, color_nb, rect_input)
             pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
-            pygame.draw.rect(self.window_surface, color2, rect_mass)
+            pygame.draw.rect(self.window_surface, color_mass, rect_mass)
 
             # Apply text surface
             Utilities().display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')

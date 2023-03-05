@@ -3,6 +3,7 @@ class Utilities():
         self.width = 1200
         self.height = 800
 
+    # Function to write paragraphes
     def display_text(self, surface, text, pos, font, color):
             collection = [word.split(' ') for word in text.splitlines()]
             space = font.size(' ')[0]
@@ -19,12 +20,13 @@ class Utilities():
                 x = pos[0]
                 y += word_height
 
+    # Function that convert mass
     def convertMassForDisplay(self, mass):
         mass = mass / (10**24)
         mass = round(mass)
         return(mass)
 
-    # Fnctioun to return the correct float of the input mass field
+    # Function to return the correct float of the input mass field
     def bodyMass(self,mass_val):
         res = ''
         res2 = ''
