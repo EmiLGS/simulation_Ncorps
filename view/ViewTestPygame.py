@@ -42,10 +42,10 @@ class ViewTestPygame():
         self.run_statistic = False
 
         # Icons
-        self.taille_return_icon = 512//11
-        self.rect_return = pygame.Rect(1200-self.taille_return_icon-25, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
-        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.taille_return_icon,self.taille_return_icon))
-        #(380,98)
+        self.icons_size = 512//11
+        self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
+        self.icon_return = pygame.transform.scale(pygame.image.load("./assets/picture/return.png"),(self.icons_size,self.icons_size))
+
         self.button_dim = (456,118)
         self.box_idle = pygame.transform.scale(pygame.image.load("./assets/picture/button.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed = pygame.transform.scale(pygame.image.load("./assets/picture/button_down.jpg"),(self.button_dim[0], self.button_dim[1]))
@@ -53,17 +53,17 @@ class ViewTestPygame():
         self.box_pressed_correct = pygame.transform.scale(pygame.image.load("./assets/picture/button_down_correct.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_idle_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
         self.box_pressed_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/button_down_incorrect.jpg"),(self.button_dim[0],self.button_dim[1]))
-        n = 11
-        self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(512//n,512//n))
-        self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(512//n,512//n))
-        self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(512//n,512//n))
-        self.icon_import = pygame.transform.scale(pygame.image.load("./assets/picture/import.png"),(512//n,512//n))
-        self.icon_import_correct = pygame.transform.scale(pygame.image.load("./assets/picture/import_correct.png"),(512//n,512//n))
-        self.icon_import_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/import_incorrect.png"),(512//n,512//n))
-        self.icon_trash = pygame.transform.scale(pygame.image.load("./assets/picture/poubelle.png"),(512//n,512//n))
+  
+        self.icon_play = pygame.transform.scale(pygame.image.load("./assets/picture/bouton-jouer.png"),(self.icons_size,self.icons_size))
+        self.icon_notice = pygame.transform.scale(pygame.image.load("./assets/picture/livre.png"),(self.icons_size,self.icons_size))
+        self.icon_exit = pygame.transform.scale(pygame.image.load("./assets/picture/se-deconnecter2.png"),(self.icons_size,self.icons_size))
+        self.icon_import = pygame.transform.scale(pygame.image.load("./assets/picture/import.png"),(self.icons_size,self.icons_size))
+        self.icon_import_correct = pygame.transform.scale(pygame.image.load("./assets/picture/import_correct.png"),(self.icons_size,self.icons_size))
+        self.icon_import_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/import_incorrect.png"),(self.icons_size,self.icons_size))
+        self.icon_trash = pygame.transform.scale(pygame.image.load("./assets/picture/poubelle.png"),(self.icons_size,self.icons_size))
         # NEXT
-        self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(512//n,512//n))
-        self.rect_next = pygame.Rect(self.taille_return_icon, 800-self.taille_return_icon-25, self.taille_return_icon, self.taille_return_icon)
+        self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(self.icons_size,self.icons_size))
+        self.rect_next = pygame.Rect(self.icons_size, 800-self.icons_size-25, self.icons_size, self.icons_size)
         
     def menu(self):
         while self.run_menu:
@@ -178,7 +178,7 @@ class ViewTestPygame():
             self.display_text(self.window_surface, text, (50,50), self.poppins_font_30, 'black')
 
             # Draw icon return
-            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+            self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
             pygame.display.flip()
 
     def simulation(self, file=None, nbBodies = 50, mass = (5.9722*10**24) ):
@@ -232,9 +232,9 @@ class ViewTestPygame():
                 pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), self.convertMassForDisplay(body.mass))
             sim.advance()
 
-            self.window_surface.blit(self.icon_return, ((self.taille_return_icon, 800-self.taille_return_icon-25)))
+            self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
             if cmpt > 200 :
-                self.window_surface.blit(self.icon_next, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+                self.window_surface.blit(self.icon_next, ((1200-self.icons_size-25, 800-self.icons_size-25)))
             pygame.display.update()
     
     def statistic(self,data):
@@ -265,7 +265,7 @@ class ViewTestPygame():
                         self.menu()
 
             self.window_surface.blit(self.background, (0, 0))
-            self.window_surface.blit(self.icon_return, ((self.taille_return_icon, 800-self.taille_return_icon-25)))
+            self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
             # PRINT FPT
             FPTsize = FPTcanvas.get_width_height()
             FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
@@ -300,7 +300,7 @@ class ViewTestPygame():
         rect_mass = pygame.Rect(400,325,300,40)
         rect_mass_outline = pygame.Rect(395,320,310,50)
         rect_import = pygame.Rect(self.button_posX,500,456,118)
-        rect_trash = pygame.Rect(self.button_posX + self.button_dim[0] + 25, 500 + 35, self.taille_return_icon, self.taille_return_icon)
+        rect_trash = pygame.Rect(self.button_posX + self.button_dim[0] + 25, 500 + 35, self.icons_size, self.icons_size)
 
         file = None
 
@@ -402,7 +402,7 @@ class ViewTestPygame():
                                 input_mass += event.unicode
 
             # Draw icon return
-            self.window_surface.blit(self.icon_return, ((1200-self.taille_return_icon-25, 800-self.taille_return_icon-25)))
+            self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
 
             # Draw play
             self.window_surface.blit(self.icon_play, (self.width//1.8, 700))       
