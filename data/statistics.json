@@ -1,6 +1,10 @@
 [
    {
-      "Temps calcul": 21,
-      "Approximation": 6
+      "Temps calcul": 5.031704664230347,
+      "Approximation": 0
+   },
+   {
+      "Temps calcul": 4.910035133361816,
+      "Approximation": 0
    }
 ]

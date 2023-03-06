@@ -1,5 +1,3 @@
-import json, os
-
 class Utilities():
     def __init__(self):
         self.width = 1200
@@ -41,24 +39,4 @@ class Utilities():
             res2 = mass_val[j] + res2
             j -= 1
         return float(res) * 10 ** int(res2)
-    
-    # Function to store and add simulation's data in a json file
-    def storeDataJson(self, data=[0,0,0], file="./data/statistics.json"):
-        values = {
-            "Temps calcul":data[1],
-            "Approximation":data[2]
-        }
-
-        array = []
-        array.append(values)
-        
-        if(os.path.getsize(file) == 0):
-            with open(file, "w") as json_file:
-                json.dump(array, json_file, indent=3, separators=(',',': '))
-        else:
-            with open(file) as f:
-                array = json.load(f)
-
-            with open(file, "w") as json_file:
-                json.dump(array, json_file, indent=3, separators=(',',': '))
         

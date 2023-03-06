@@ -9,11 +9,14 @@ from controller.VerifyController import VerifyController
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from model.ImportBodiesSimulation import *
 from controller.Utilities import Utilities
+from controller.JsonController import JsonController
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
 
 class ViewTestPygame():
     def __init__(self):
         pygame.init()
+
+        self.jsonController = JsonController("./data/statistics.json")
 
         # Fonts
         pygame.font.init()
@@ -66,8 +69,7 @@ class ViewTestPygame():
         self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
         
     def menu(self):
-        #save_file = open("./data/statistics.json", "w")
-        Utilities().storeDataJson([2,21,6],file="./data/statistics.json")
+
         while self.run_menu:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -119,6 +121,7 @@ class ViewTestPygame():
                 # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
+                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
 
@@ -140,6 +143,7 @@ class ViewTestPygame():
 
                     # Click on Quit
                     if rect_quitter.collidepoint((mouseX,mouseY)):
+                        self.jsonController.deleteJsonFile()
                         sys.exit()
             
             
@@ -170,6 +174,7 @@ class ViewTestPygame():
                 # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
+                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
                 
@@ -206,6 +211,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
+                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
                 
@@ -216,11 +222,18 @@ class ViewTestPygame():
                         if self.rect_return.collidepoint((mouseX,mouseY)):
                             finishTime = time.time() - initTime
                             print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
+
+                            # Save simulation
+                            self.jsonController.storeDataJson([finishTime, 0])
+
                             self.run_statistic = True
                             self.run_simulation = False
                             self.statistic(data)
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
+                        # Save simulation
+                        self.jsonController.storeDataJson([finishTime, 0])
+
                         # Run screen
                         self.run_configurator = True
                         self.run_simulation = False
@@ -270,6 +283,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_statistic = False
+                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
 
@@ -338,6 +352,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_configurator = False
+                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
                 # CLICK EVENT
