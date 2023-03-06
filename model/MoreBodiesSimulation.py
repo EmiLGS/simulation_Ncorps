@@ -6,10 +6,13 @@ class MoreBodiesSimulation():
 
     G = 6.67*10**-11
 
-    def __init__(self,bodyCount=None, mass=(5.9722*10**24), width=None, height=None):
+    def __init__(self, bodyCount=None, mass=(5.9722*10**24), width=None, height=None, bodies=[]):
         self.bodies = []
-        self.bodyCount = bodyCount if bodyCount else 3
-        for _ in range(self.bodyCount):
+        self.bodyCount = bodyCount if len(bodies) < bodyCount else len(bodies)
+
+        self.bodies = bodies
+
+        for _ in range(bodyCount - len(bodies)):
             self.bodies.append(Body(mass,randint(20,width-20),randint(20,height-20)))
 
     def advance(self):

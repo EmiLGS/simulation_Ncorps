@@ -26,6 +26,8 @@ class ViewTestPygame():
         self.width = 1200
         self.height = 800
 
+        self.nb_simulations = 0
+
         pygame.display.set_caption('Ncorps')
         self.window_surface = pygame.display.set_mode((self.width, self.height))
         self.background = pygame.Surface((1200, 800))
@@ -64,6 +66,8 @@ class ViewTestPygame():
         self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
         
     def menu(self):
+        #save_file = open("./data/statistics.json", "w")
+        Utilities().storeDataJson([2,21,6],file="./data/statistics.json")
         while self.run_menu:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -347,6 +351,7 @@ class ViewTestPygame():
                     # Start simulation
                     if rect_jouer.collidepoint((mouseX,mouseY)):
                         if(can_run):
+                            self.nb_simulations += 1
                             self.run_simulation = True
                             self.run_configurator = False
 
