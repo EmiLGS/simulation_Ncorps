@@ -19,7 +19,7 @@ class MoreBodiesSimulation():
         for body in self.bodies:
             self.computeAllForces(body)
 
-        #Update the speed of both bodies and get their position accordinglyswww
+        #Update the speed of both bodies and get their position accordingly
         for body in self.bodies:
             body.computeNewPos()
     

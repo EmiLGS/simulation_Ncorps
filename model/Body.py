@@ -11,7 +11,7 @@ class Body():
         
 
     def addForce(self,force):
-        self.acc += force/self.mass
+        self.acc += force/float(self.mass)
 
     def computeNewPos(self):
         #TODO check if accMax is good enough or if there is a way to improve it
@@ -23,6 +23,7 @@ class Body():
 
         #Add speed to position
         self.pos += self.spd
+        print(self)
 
     def __str__(self):
         return "Body : x = " + str(self.pos[0]) + ", y = " + str(self.pos[1])
