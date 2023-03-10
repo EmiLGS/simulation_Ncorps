@@ -242,24 +242,26 @@ class ViewTestPygame():
 
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
+
+            # Get base values for min and max exponential
             mass_min_r = math.floor(math.log(sim.bodies[0].mass, 10))
             mass_max_r = math.floor(math.log(sim.bodies[0].mass, 10))
+            # Values for the size in pixels of the bodies
+            minp = 1
+            maxp = 10
 
+            # Get min and max exp values for all bodies
             for body in sim.bodies:
                 exp = math.floor(math.log(body.mass, 10))
-  
                 if(exp < mass_min_r):
                     mass_min_r = exp
                 if(exp > mass_max_r):
                     mass_max_r = exp
             
-            minp = 1
-            maxp = 10
             # Draw bodies
             for body in sim.bodies:
-                mass_min_r, mass_max_r, math.floor(math.log(body.mass, 10)), minp, maxp
+                # Scale the size of the bodies
                 nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + minp
-                print(nombreSortie)
                 pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), int(nombreSortie))
             sim.advance()
 
