@@ -243,19 +243,24 @@ class ViewTestPygame():
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
 
-            mass_min_r = 0
-            mass_max_r = sim.bodies[0].mass
+            mass_min_r = Utilities().bodyMassExp(str(sim.bodies[0].mass))
+            mass_max_r = Utilities().bodyMassEXP(str(sim.bodies[0].mass))
 
             for body in sim.bodies:
                 exp = math.floor(math.log(body.mass, 10))
+  
                 if(exp < mass_min_r):
                     mass_min_r = exp
                 if(exp > mass_max_r):
                     mass_max_r = exp
-
+            
+            minp= 1
+            maxp=15
             # Draw bodies
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), math.floor(math.log(body.mass, 10)))
+                mass_min_r, mass_max_r, math.floor(math.log(body.mass, 10)), minp, maxp
+                nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + mass_min_r
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), int(nombreSortie))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
