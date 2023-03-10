@@ -1,6 +1,7 @@
 
 import time
 import pygame, sys
+import math
 
 from time import sleep
 from decimal import Decimal
@@ -189,11 +190,11 @@ class ViewTestPygame():
 
             pygame.display.flip()
 
-    def simulation(self, file=None, nbBodies = 50, mass = (5.9722*10**24) ):
+    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**24), mass_max = (5.9722*10**24)):
         # Use a specific simulation
         sim = None
         if file == None:
-            sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+            sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
         else:
             sim = ImportBodiesSimulation(file, len(file))
 
@@ -242,9 +243,19 @@ class ViewTestPygame():
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
 
+            mass_min_r = 0
+            mass_max_r = sim.bodies[0].mass
+
+            for body in sim.bodies:
+                exp = math.floor(math.log(body.mass, 10))
+                if(exp < mass_min_r):
+                    mass_min_r = exp
+                if(exp > mass_max_r):
+                    mass_max_r = exp
+
             # Draw bodies
             for body in sim.bodies:
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), Utilities().convertMassForDisplay(body.mass))
+                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), math.floor(math.log(body.mass, 10)))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
@@ -300,17 +311,20 @@ class ViewTestPygame():
     def configuration(self):
         # Variables
         active_nb = False
-        active_mass = False
+        active_mass_min = False
+        active_mass_max = False
         error = None
         can_run = False
         color_active = pygame.Color(180, 180, 180)
         color_passive = pygame.Color(230, 230, 230)
         color_nb = color_passive
-        color_mass = color_passive
+        color_mass_min = color_passive
+        color_mass_max = color_passive
 
         # Input Value
         input_number = '50'
-        input_mass = '5.9722*10**24'
+        input_mass_min = '5.9722*10**24'
+        input_mass_max = '5.9722*10**24'
 
         self.button_posX = (self.width/2)-(self.button_dim[0]/2)
 
@@ -318,8 +332,10 @@ class ViewTestPygame():
         rect_jouer = pygame.Rect(self.width//3.5, 700, 1000, 100)
         rect_input = pygame.Rect(400,125,300,40)
         rect_input_outline = pygame.Rect(395,120,310,50)
-        rect_mass = pygame.Rect(400,325,300,40)
-        rect_mass_outline = pygame.Rect(395,320,310,50)
+        rect_mass_min = pygame.Rect(400,250,300,40)
+        rect_mass_min_outline = pygame.Rect(395,245,310,50)
+        rect_mass_max = pygame.Rect(400,375,300,40)
+        rect_mass_max_outline = pygame.Rect(395,370,310,50)
         rect_import = pygame.Rect(self.button_posX,500,456,118)
         rect_trash = pygame.Rect(self.button_posX + self.button_dim[0] + 25, 500 + 35, self.icons_size, self.icons_size)
 
@@ -335,7 +351,7 @@ class ViewTestPygame():
             self.window_surface.blit(self.background, (0, 0))
 
             # Verify inputs
-            if(controller.verifyInput(input_number, input_mass) == False or controller.verifyNb(input_number) == False):
+            if(controller.verifyInput(input_number, input_mass_min, input_mass_max) == False or controller.verifyNb(input_number) == False):
                 can_run = False
             else:
                 can_run = True
@@ -343,10 +359,16 @@ class ViewTestPygame():
             # Check state input
             if(active_nb):
                 color_nb = color_active
-                color_mass = color_passive
-            else:
+                color_mass_min = color_passive
+                color_mass_max = color_passive
+            elif(active_mass_min):
+                color_mass_min = color_active
                 color_nb = color_passive
-                color_mass = color_active           
+                color_mass_max = color_passive
+            elif(active_mass_max):
+                color_mass_max = color_active
+                color_mass_min = color_passive
+                color_nb = color_passive        
 
             # EVENT
             for event in pygame.event.get():
@@ -371,21 +393,33 @@ class ViewTestPygame():
                             self.run_configurator = False
 
                             if(file == None):
-                                self.simulation(nbBodies = int(input_number), mass = Utilities().bodyMass(input_mass))
+                                self.simulation(nbBodies = int(input_number), mass_min = input_mass_min, mass_max = input_mass_max)
                             else:
-                                self.simulation(file, nbBodies = int(input_number), mass = Utilities().bodyMass(input_mass))
+                                self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMass(input_mass_min), mass_max = Utilities().bodyMass(input_mass_max))
 
                     # Type text input nb
                     if rect_input.collidepoint((mouseX,mouseY)):
-                        if(active_mass == True):
-                            active_mass = not active_mass
+                        if(active_mass_min == True):
+                            active_mass_min = not active_mass_min
+                        elif(active_mass_max == True):
+                            active_mass_max = not active_mass_max
                         active_nb = not active_nb 
 
-                    # Type text input mass
-                    if rect_mass.collidepoint((mouseX,mouseY)):
+                    # Type text input mass_min
+                    if rect_mass_min.collidepoint((mouseX,mouseY)):
                         if(active_nb == True):
                             active_nb = not active_nb
-                        active_mass = not active_mass
+                        elif(active_mass_max == True):
+                            active_mass_max = not active_mass_max
+                        active_mass_min = not active_mass_min
+                    
+                    # Type text input mass_max
+                    if rect_mass_max.collidepoint((mouseX,mouseY)):
+                        if(active_mass_min == True):
+                            active_mass_min = not active_mass_min
+                        elif(active_nb == True):
+                            active_nb = not active_nb
+                        active_mass_max = not active_mass_max
 
                     Utilities().display_text(self.window_surface, "Fichier incorrect", (self.button_posX, 410), self.poppins_font_30, '#D10000')
 
@@ -409,8 +443,10 @@ class ViewTestPygame():
                         # get text input from 0 to -1 i.e. end.
                         if(active_nb):
                             input_number = input_number[:-1]
-                        else:
-                            input_mass = input_mass[:-1]
+                        elif(active_mass_min):
+                            input_mass_min = input_mass_min[:-1]
+                        elif(active_mass_max):
+                            input_mass_max = input_mass_max[:-1]
 
                     # Unicode standard is used for string
                     # formation
@@ -418,8 +454,10 @@ class ViewTestPygame():
                         if event.unicode.isdigit():
                             if(active_nb):       
                                 input_number += event.unicode
-                            else:
-                                input_mass += event.unicode
+                            elif(active_mass_min):
+                                input_mass_min += event.unicode
+                            elif(active_mass_max):
+                                input_mass_max += event.unicode
 
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
@@ -430,17 +468,21 @@ class ViewTestPygame():
             # Display text on inputs
             Utilities().display_text(self.window_surface, "Lancer la simulation", (self.width//3.3,700), self.poppins_font_30, '#007AB5')
             Utilities().display_text(self.window_surface,"Nombre de corps ? (2 - 100)", (400,75),self.poppins_font_30,'#007AB5')
-            Utilities().display_text(self.window_surface,"Masse des corps ? (x * (10**11 - 10**24) )", (400,275),self.poppins_font_30,'#007AB5')
-            
+            Utilities().display_text(self.window_surface,"Masse des corps minimum ? (x * (10**11 - 10**24) )", (400,200),self.poppins_font_30,'#007AB5')
+            Utilities().display_text(self.window_surface,"Masse des corps maximum ? (x * (10**11 - 10**24) )", (400,325),self.poppins_font_30,'#007AB5')
+
             # Draw the rectangles
             pygame.draw.rect(self.window_surface,"#007AB5", rect_input_outline)
             pygame.draw.rect(self.window_surface, color_nb, rect_input)
-            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_outline)
-            pygame.draw.rect(self.window_surface, color_mass, rect_mass)
+            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_min_outline)
+            pygame.draw.rect(self.window_surface, color_mass_min, rect_mass_min)
+            pygame.draw.rect(self.window_surface, "#007AB5", rect_mass_max_outline)
+            pygame.draw.rect(self.window_surface, color_mass_max, rect_mass_max)
 
             # Apply text surface
             Utilities().display_text(self.window_surface, input_number, (rect_input.x, rect_input.y), self.poppins_font_30, 'black')
-            Utilities().display_text(self.window_surface, input_mass, (rect_mass.x, rect_mass.y), self.poppins_font_30, 'black')
+            Utilities().display_text(self.window_surface, input_mass_min, (rect_mass_min.x, rect_mass_min.y), self.poppins_font_30, 'black')
+            Utilities().display_text(self.window_surface, input_mass_max, (rect_mass_max.x, rect_mass_max.y), self.poppins_font_30, 'black')
             
             # Animation hover import button
             if not rect_import.collidepoint(mouseX, mouseY):

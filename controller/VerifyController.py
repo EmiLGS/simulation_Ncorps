@@ -10,9 +10,9 @@ class VerifyController():
     def verifyMass(self, mass):
         return (mass >= 1)
 
-    def verifyInput(self, input_number, input_mass):
+    def verifyInput(self, input_number, input_mass_min, input_mass_max):
         # Check if parameters have been given
-        return(input_number != '' and input_mass != '') 
+        return(input_number != '' and input_mass_min != '' and input_mass_max != '') 
 
     def verifyImport(self, file):
         tab = self.getBodyFromCSV(file)

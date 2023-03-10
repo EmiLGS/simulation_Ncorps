@@ -5,4 +5,3 @@ import pygame, sys
 if __name__ == '__main__':
     nCorps = ViewTestPygame()
     nCorps.menu()
-    

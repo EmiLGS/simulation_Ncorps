@@ -39,4 +39,12 @@ class Utilities():
             res2 = mass_val[j] + res2
             j -= 1
         return float(res) * 10 ** int(res2)
+    
+    def bodyMassExp(self, mass_val):
+        res = ''
+        i = -1
+        while mass_val[i] != '*':
+            res = mass_val[i] + res
+            i -= 1
+        return int(res)
         

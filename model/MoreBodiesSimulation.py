@@ -1,19 +1,26 @@
 import numpy as np
 from model.Body import Body
 from random import randint
+from controller.Utilities import Utilities
 
 class MoreBodiesSimulation():
 
     G = 6.67*10**-11
 
-    def __init__(self, bodyCount=None, mass=(5.9722*10**24), width=None, height=None, bodies=[]):
+    def __init__(self, bodyCount=None, mass_min=("5.9722*10**24"), mass_max=("5.9722*10**24"), width=None, height=None, bodies=[]):
         self.bodies = []
         self.bodyCount = bodyCount if len(bodies) < bodyCount else len(bodies)
 
         self.bodies = bodies
 
+        mass_min = Utilities().bodyMassExp(mass_min)
+        mass_max = Utilities().bodyMassExp(mass_max)
+
         for _ in range(bodyCount - len(bodies)):
-            self.bodies.append(Body(mass,randint(20,width-20),randint(20,height-20)))
+            random_exp = randint(mass_min, mass_max)
+            random_float = float(randint(1,9))
+            random_mass = float(random_float*10**random_exp)
+            self.bodies.append(Body(random_mass,randint(20,width-20),randint(20,height-20)))
 
     def advance(self):
 
