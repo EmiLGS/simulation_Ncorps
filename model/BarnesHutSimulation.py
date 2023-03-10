@@ -1,6 +1,6 @@
 from model.Body import Body
 from random import randint
-from model.QuadTree import QuadTree
+from model.QuadTreeBarnesHut import QuadTree
 
 class BarnesHutSimulation():
 
