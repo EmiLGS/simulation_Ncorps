@@ -9,9 +9,6 @@ class ThreeBodiesSimulation():
         self.body2 = body2 if body2 else Body(200,200)
         self.body3 = body3 if body3 else Body(600,500)
         self.bodies = [body1,body2,body3]
-        vitin = 2
-        self.body2.spd = np.array([0.0,vitin])
-        self.body3.spd = np.array([0.0,-vitin])
 
 
     def advance(self):

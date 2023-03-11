@@ -9,6 +9,7 @@ from model.ThreeBodiesSimulation import ThreeBodiesSimulation
 from model.TwoBodiesSimulation import TwoBodiesSimulation
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from model.BarnesHutSimulation import BarnesHutSimulation
+from model.Body import Body
 import numpy as np
 
 class ViewTestPygame():
@@ -163,7 +164,13 @@ class ViewTestPygame():
     def simulation(self, nbBodies = 50, mass = (5.9722*10**24) ):
         # Use simControllerulation specific.
         # sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
-        sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
+        body1 = Body(500,500,10**12)
+        body2 = Body(600,500,10)
+        body3 = Body(400,500,10)
+        body2.spd = np.array([0.0,1])
+        body3.spd = np.array([0.0,-1])
+        # sim = MoreBodiesSimulation(bodies=[body1,body2,body3])
+        sim = BarnesHutSimulation(bodies=[body1, body2, body3],width=self.width,height=self.height,precision=0)
 
         while self.run_simulation:
 

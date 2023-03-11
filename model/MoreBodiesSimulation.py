@@ -22,6 +22,7 @@ class MoreBodiesSimulation():
         #Update the speed of both bodies and get their position accordingly
         for body in self.bodies:
             body.computeNewPos()
+        print("\n")
     
     def computeAllForces(self,body):
         body.acc = 0
@@ -33,3 +34,4 @@ class MoreBodiesSimulation():
 
                 Vdir = np.array([a,b])
                 body.addForce(((GlobVar.G*body.mass*otherBody.mass)/(d**3))*Vdir)
+                # print("Force de", body, "par", otherBody, "=", ((GlobVar.G*body.mass*otherBody.mass)/(d**3))*Vdir)

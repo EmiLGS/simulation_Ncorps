@@ -99,7 +99,7 @@ class Node():
         else:
             r = np.sqrt((self.massCenter[0] - body.pos[0]) ** 2 + (self.massCenter[1] - body.pos[1]) ** 2)
             D = self.w
-            if self.w/r < precision:
+            if r != 0 and D/r < precision:
                 otherBody = Body(self.massCenter[0],self.massCenter[1],self.mass)
             #else we just calculate the force in all the children independently
             else:
@@ -114,6 +114,7 @@ class Node():
 
         Vdir = np.array([a,b])
         force = ((GlobVar.G * otherBody.mass * body.mass)/d**3)*Vdir
+        # print("Forc de", body, "par", otherBody,"=",force)
         return force
 
     def __str__(self):
@@ -138,7 +139,6 @@ class QuadTree():
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
-        print(self)
 
     def addBody(self,x,y):
         self.bodies.append(Body(x,y))
