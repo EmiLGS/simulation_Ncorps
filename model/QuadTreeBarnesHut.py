@@ -133,20 +133,21 @@ class Node():
         return res
 
 class QuadTree():
-    def __init__(self, width, bodies=[]):
+    def __init__(self, width, xShift, yShift, bodies=[]):
+        self.xShift = xShift
+        self.yShift = yShift
         self.bodies = []
+        self.realBodiesToFakeBodies = {}
         self.node0 = Node(0,0,width,[])
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
         print(self)
 
-    def addBody(self,x,y):
-        self.bodies.append(Body(x,y))
-
-    def quadInsert(self,body):
-        self.bodies.append(body)
-        self.node0.insert(body)
+    def quadInsert(self,realBody):
+        self.realBodiesToFakeBodies[realBody] = Body(realBody.pos[0]+self.xShift, realBody.pos[1]+self.yShift, realBody.mass)
+        self.bodies.append(self.realBodiesToFakeBodies[realBody])
+        self.node0.insert(self.realBodiesToFakeBodies[realBody])
 
     def removeEmptyLeaves(self):
         self.node0.removeEmptyLeaves()
@@ -155,7 +156,7 @@ class QuadTree():
         self.node0.computeMass()
     
     def computeForce(self, body, precision):
-        return self.node0.computeForce(body, precision)
+        return self.node0.computeForce(self.realBodiesToFakeBodies[body], precision)
     
     def __str__(self):
         return str(self.node0)
