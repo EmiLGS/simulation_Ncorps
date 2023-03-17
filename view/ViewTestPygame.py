@@ -225,7 +225,7 @@ class ViewTestPygame():
                             print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
 
                             # Save simulation
-                            self.jsonController.storeDataJson([finishTime, 0])
+                            self.jsonController.storeDataJson([0, 0])
 
                             self.run_statistic = True
                             self.run_simulation = False
