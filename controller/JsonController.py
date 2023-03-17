@@ -29,4 +29,4 @@ class JsonController():
     # Function to reset the file
     def deleteJsonFile(self):
         with open(self.file, "w") as json_file:
-                json.dump("[]", json_file)
+                json.dump([], json_file)
