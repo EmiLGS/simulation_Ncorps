@@ -1,6 +1,7 @@
 from model.Body import Body
 from random import randint
 from model.QuadTreeBarnesHut import QuadTree
+import numpy as np
 
 class BarnesHutSimulation():
 
@@ -16,8 +17,21 @@ class BarnesHutSimulation():
         print(*bodies)
 
     def advance(self):
-        #TODO compute quadtree size with maximum and minimum of all bodies positions
-        quadtree = QuadTree(self.quadTreeWidth,self.bodies)
+        
+        minX, minY, maxX, maxY = np.inf,np.inf,-np.inf,-np.inf
+        for body in self.bodies:
+            if body.pos[0] > maxX:
+                maxX = body.pos[0]
+            if body.pos[1] > maxY:
+                maxY = body.pos[1]
+            if body.pos[0] < minX:
+                minX = body.pos[0]
+            if body.pos[1] < minY:
+                minY = body.pos[1]
+
+        quadWidth = max(maxY - minY, maxX - minX)
+
+        quadtree = QuadTree(quadWidth,-minX,-minY, self.bodies)
 
         print("\n")
 
