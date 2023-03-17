@@ -205,8 +205,6 @@ class ViewTestPygame():
         data = [[],[]]
         initTime = time.time()
     
-        # Use simControllerulation specific.
-        # sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
         #sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:

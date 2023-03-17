@@ -19,7 +19,6 @@ class Body():
         # accMax = np.inf
         # self.acc = self.acc if accMag < accMax else self.acc/accMag * np.array([accMax,accMax])
         #Add acceleration to speed
-        print(self.acc)
         self.spd += self.acc
 
         #Add speed to position
