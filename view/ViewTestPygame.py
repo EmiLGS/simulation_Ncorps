@@ -12,6 +12,8 @@ from model.ImportBodiesSimulation import *
 from controller.Utilities import Utilities
 from controller.JsonController import JsonController
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
+from model.BarnesHutSimulation import BarnesHutSimulation
+import numpy as np
 
 class ViewTestPygame():
     def __init__(self):
@@ -21,10 +23,11 @@ class ViewTestPygame():
 
         # Fonts
         pygame.font.init()
-        self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-regular.ttf", 15)
-        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-regular.ttf", 30)
-        self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-regular.ttf", 35)
-        self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-regular.ttf", 80)
+        self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 15)
+        self.poppins_font_30 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 30)
+        self.poppins_font_35 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 35)
+        self.poppins_font_80 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 80)
+        pygame.font.get_fonts()
 
         # Windows parameters
         self.width = 1200
@@ -201,6 +204,10 @@ class ViewTestPygame():
         cmpt = 0
         data = [[],[]]
         initTime = time.time()
+    
+        # Use simControllerulation specific.
+        # sim = MoreBodiesSimulation(nbBodies, mass,self.width, self.height)
+        #sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:
             # Get mouse position

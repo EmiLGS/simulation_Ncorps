@@ -1,17 +1,17 @@
 import numpy as np
 from model.Body import Body
+from model.GlobVar import GlobVar
 
 class TwoBodiesSimulation():
-
-    G = 6.67*10**-11
 
     def __init__(self,body1=None,body2=None):
         self.body1 = body1 if body1 else Body(400,400)
         self.body2 = body2 if body2 else Body(200,400)
+        self.bodies = [body1,body2]
         self.body1.mass = 10*10**11
         self.body2.mass = 1
         dist = np.sqrt((self.body1.pos[0] - self.body2.pos[0])**2 + (self.body1.pos[1] - self.body2.pos[1]))
-        vitin = np.sqrt(self.G*self.body1.mass/(dist))
+        vitin = np.sqrt(GlobVar.G*self.body1.mass/(dist))
         self.body2.spd = np.array([0.0,vitin])
 
     def getFirstBody(self):
@@ -27,9 +27,10 @@ class TwoBodiesSimulation():
         d = np.sqrt(a**2 + b**2)
 
         V12 = np.array([a,b])
-        force = ((self.G*self.body1.mass*self.body2.mass)/(d**3))*V12
+        force = ((GlobVar.G*self.body1.mass*self.body2.mass)/(d**3))*V12
 
-
+        self.body1.acc = np.array([0.0,0.0])
+        self.body2.acc = np.array([0.0,0.0])
         #Apply force to both bodies
         self.body1.addForce(force)
         self.body2.addForce(-force)
