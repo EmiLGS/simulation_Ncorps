@@ -1,4 +1,5 @@
 import csv
+import os
 
 class VerifyController():
     def __init__(self, window):
@@ -16,7 +17,7 @@ class VerifyController():
 
     def verifyImport(self, file):
         tab = self.getBodyFromCSV(file)
- 
+
         # Verify size
         if(len(tab) < 2 or len(tab) > 200):
             return False
@@ -24,17 +25,24 @@ class VerifyController():
         # Verify position of each objects
         for i in range(len(tab)):
             if(int(tab[i][0]) < 0 or int(tab[i][0]) > self.window[0]):
-                return False  
+                return False
             if(int(tab[i][1]) < 0 or int(tab[i][1]) > self.window[1]):
                 return False
         
         return True
     
+    # def verifyExtension(self,file):
+    #     file_name, file_extension = os.path.splitext(file)
+    #     print(file_extension)
+    #     if (file_extension == '.csv'):
+    #         return True
+    #     return False
+    
     def getBodyFromCSV(self, file):
         tab = []
         row_count = 0
 
-        # Défine size of the array
+        # Define size of the array
         with open(file, 'r') as f:
             obj = csv.reader(f)
             row_count = sum(1 for row in obj)

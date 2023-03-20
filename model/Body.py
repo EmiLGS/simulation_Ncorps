@@ -25,4 +25,17 @@ class Body():
         self.pos += self.spd
 
     def __str__(self):
-        return "Body : x = " + str(self.pos[0]) + ", y = " + str(self.pos[1])
+        return "Body : x =  " + str(self.pos[0]) + ", y = " + str(self.pos[1])
+        
+    #!! Disgusting function ...
+    def getBodyColor(self,size):
+        if size >= 1 and size < 4:
+            return '#000000'
+        elif size >= 4 and size < 7:
+            return '#999999'
+        elif size == 7:
+            return '#FFFF00'
+        elif size > 7 and size < 10:
+            return '#FF9900'
+        elif size == 10:
+            return '#FF0000'

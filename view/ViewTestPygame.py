@@ -226,11 +226,11 @@ class ViewTestPygame():
                     # Click on return
                     if cmpt > 200 :
                         if self.rect_return.collidepoint((mouseX,mouseY)):
-                            finishTime = time.time() - initTime
-                            print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
+                            # finishTime = time.time() - initTime
+                            # print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
 
                             # Save simulation
-                            self.jsonController.storeDataJson([0, 0])
+                            # self.jsonController.storeDataJson([finishTime, 0])
 
                             self.run_statistic = True
                             self.run_simulation = False
@@ -238,7 +238,7 @@ class ViewTestPygame():
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
-                        self.jsonController.storeDataJson([finishTime, 0])
+                        # self.jsonController.storeDataJson([finishTime, 0])
 
                         # Run screen
                         self.run_configurator = True
@@ -265,9 +265,13 @@ class ViewTestPygame():
             
             # Draw bodies
             for body in sim.bodies:
+                # if mass max equal to min max set a pixel size for all
+                if mass_max_r == mass_min_r :
+                    pygame.draw.circle(self.window_surface,body.getBodyColor(7),(body.pos[0],body.pos[1]), 7)
                 # Scale the size of the bodies
-                nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + minp
-                pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), int(nombreSortie))
+                else :
+                    nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + minp
+                    pygame.draw.circle(self.window_surface,body.getBodyColor(int(nombreSortie)),(body.pos[0],body.pos[1]), int(nombreSortie))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
@@ -335,8 +339,8 @@ class ViewTestPygame():
 
         # Input Value
         input_number = '50'
-        input_mass_min = '5.9722*10**24'
-        input_mass_max = '5.9722*10**24'
+        input_mass_min = '5.9722*10**6'
+        input_mass_max = '5.9722*10**12'
 
         self.button_posX = (self.width/2)-(self.button_dim[0]/2)
 
@@ -441,14 +445,11 @@ class ViewTestPygame():
 
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
-                        file = filedialog.askopenfilename(initialdir="D:/Université/L3/S6/Projet 2/simulation_ncorps_yega/data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
-                        if(controller.verifyImport(file) == False):
-                            error = True
-                            file = None
-                        else:
-                            error = False
+                        file = filedialog.askopenfile(mode = "r",initialdir="./data", title="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        if file != None:
                             file = controller.getBodyFromCSV(file)
-                        
+                        else :
+                            error = True
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
@@ -464,7 +465,7 @@ class ViewTestPygame():
                     # formation
                     else:
                         if event.unicode.isdigit():
-                            if(active_nb):       
+                            if(active_nb):
                                 input_number += event.unicode
                             elif(active_mass_min):
                                 input_mass_min += event.unicode
