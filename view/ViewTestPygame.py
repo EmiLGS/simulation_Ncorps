@@ -262,11 +262,11 @@ class ViewTestPygame():
             for body in sim.bodies:
                 # if mass max equal to min max set a pixel size for all
                 if mass_max_r == mass_min_r :
-                    pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), 7)
+                    pygame.draw.circle(self.window_surface,body.getBodyColor(7),(body.pos[0],body.pos[1]), 7)
                 # Scale the size of the bodies
                 else :
                     nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + minp
-                    pygame.draw.circle(self.window_surface,(0,0,0),(body.pos[0],body.pos[1]), int(nombreSortie))
+                    pygame.draw.circle(self.window_surface,body.getBodyColor(int(nombreSortie)),(body.pos[0],body.pos[1]), int(nombreSortie))
             sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
@@ -440,14 +440,11 @@ class ViewTestPygame():
 
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
-                        file = filedialog.askopenfilename(initialdir="./data", title ="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
-                        if(controller.verifyImport(file) == False):
-                            error = True
-                            file = None
-                        else:
-                            error = False
+                        file = filedialog.askopenfile(mode = "r",initialdir="./data", title="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        if file != None:
                             file = controller.getBodyFromCSV(file)
-                        
+                        else :
+                            error = True
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
@@ -463,7 +460,7 @@ class ViewTestPygame():
                     # formation
                     else:
                         if event.unicode.isdigit():
-                            if(active_nb):       
+                            if(active_nb):
                                 input_number += event.unicode
                             elif(active_mass_min):
                                 input_mass_min += event.unicode
