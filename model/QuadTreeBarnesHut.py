@@ -142,7 +142,7 @@ class QuadTree():
         for body in bodies:
             self.quadInsert(body)
         self.node0.removeEmptyLeaves()
-        print(self)
+        # print(self)
 
     def quadInsert(self,realBody):
         self.realBodiesToFakeBodies[realBody] = Body(realBody.pos[0]+self.xShift, realBody.pos[1]+self.yShift, realBody.mass)
@@ -165,5 +165,5 @@ class QuadTree():
         #quelques tests
         print("nombre de points : ", len(self.bodies) == 20)
         print(self.bodies[0].pos[0])
-        # self.div()
-        # print("node : ", self.node0.children[0].get_points()[0].x,",", self.node0.children[0].get_points()[0].y)
+        self.div()
+        print("node : ", self.node0.children[0].get_points()[0].x,",", self.node0.children[0].get_points()[0].y)

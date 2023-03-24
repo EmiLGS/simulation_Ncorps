@@ -69,13 +69,8 @@ class QuadTree():
         division(self.node0,self.m)
     
     def afficher(self):
-        #quelques testes 
+        # quelques testes 
         print("nombre de points : ", len(self.points) == 20)
         print(self.points[0].y)
-        # self.div()
-        # print("node : ", self.node0.children[0].get_points()[0].x,",", self.node0.children[0].get_points()[0].y)
-
-
-
-q = QuadTree(1)
-q.afficher()
+        self.div()
+        print("node : ", self.node0.children[0].get_points()[0].x,",", self.node0.children[0].get_points()[0].y)

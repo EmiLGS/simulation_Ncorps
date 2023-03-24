@@ -34,7 +34,7 @@ class Body():
         elif size >= 4 and size < 7:
             return '#999999'
         elif size == 7:
-            return '#FFFF00'
+            return '#FFD02D'
         elif size > 7 and size < 10:
             return '#FF9900'
         elif size == 10:

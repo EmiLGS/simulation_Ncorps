@@ -14,7 +14,7 @@ class BarnesHutSimulation():
         self.bodyCount = bodyCount if bodyCount > len(bodies) else len(bodies)
         for _ in range(bodyCount-len(bodies)):
             self.bodies.append(Body(randint(20,width-20),randint(20,height-20),mass))
-        print(*bodies)
+        # print(*bodies)
 
     def advance(self):
         
@@ -33,7 +33,7 @@ class BarnesHutSimulation():
 
         quadtree = QuadTree(quadWidth,-minX,-minY, self.bodies)
 
-        print("\n")
+        # print("\n")
 
         quadtree.computeMasses()
 

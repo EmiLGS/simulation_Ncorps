@@ -11,6 +11,7 @@ from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from model.ImportBodiesSimulation import *
 from controller.Utilities import Utilities
 from controller.JsonController import JsonController
+from vendor.Checkbox import Checkbox
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
 from model.BarnesHutSimulation import BarnesHutSimulation
 import numpy as np
@@ -193,11 +194,18 @@ class ViewTestPygame():
 
             pygame.display.flip()
 
-    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**24), mass_max = (5.9722*10**24)):
+    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**24), mass_max = (5.9722*10**24), algo="classic"):
         # Use a specific simulation
         sim = None
         if file == None:
-            sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
+            if algo == "classic":
+                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
+            elif algo == "barnesHut":
+                #!! Implement max and min mass
+                sim = BarnesHutSimulation(bodyCount=nbBodies, width=self.width, height=self.height)
+            elif algo == "FMM":
+                #!! NOTHING FOR THE MOMENT
+                sim = MoreBodiesSimulation(nbBodies, mass_max, self.width, self.height)
         else:
             sim = ImportBodiesSimulation(file, len(file))
 
@@ -352,20 +360,33 @@ class ViewTestPygame():
         rect_mass_min_outline = pygame.Rect(395,245,310,50)
         rect_mass_max = pygame.Rect(400,375,300,40)
         rect_mass_max_outline = pygame.Rect(395,370,310,50)
-        rect_import = pygame.Rect(self.button_posX,500,456,118)
+        rect_import = pygame.Rect(self.button_posX,500,556,118)
         rect_trash = pygame.Rect(self.button_posX + self.button_dim[0] + 25, 500 + 35, self.icons_size, self.icons_size)
 
         file = None
 
+        # Checkbox algorithm selector*
+        # Boxe for multiple check
+        boxes = []
+        #checkbox
+        classic = Checkbox(surface=self.window_surface,x=350,y=450,caption="Algorithme quadratique", idnum=1,font_color='#007AB5',checked=True, algo="classic")
+        barnersHutt = Checkbox(surface=self.window_surface,x=570,y=450,caption="Barners Hutt", idnum=2,font_color='#007AB5', algo="barnesHut")
+        FMM = Checkbox(surface=self.window_surface,x=720,y=450,caption="FMM", idnum=3,font_color='#007AB5',algo="FMM")
+        #Append into the boxes
+        boxes.append(classic)
+        boxes.append(barnersHutt)
+        boxes.append(FMM)
+        
         while self.run_configurator:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
 
             controller = VerifyController((800,1200))
-
             # Draw background
             self.window_surface.blit(self.background, (0, 0))
-
+            #checkbox update
+            for checkbox in boxes:
+                checkbox.render_checkbox()
             # Verify inputs
             if(controller.verifyInput(input_number, input_mass_min, input_mass_max) == False or controller.verifyNb(input_number) == False):
                 can_run = False
@@ -395,6 +416,12 @@ class ViewTestPygame():
                     sys.exit()
                 # CLICK EVENT
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    for box in boxes:
+                        box.update_checkbox(event)
+                        if box.checked is True:
+                            for b in boxes:
+                                if b != box:
+                                    b.checked = False
                     # Return
                     if self.rect_return.collidepoint((mouseX,mouseY)):
                         self.run_menu = True
@@ -409,7 +436,9 @@ class ViewTestPygame():
                             self.run_configurator = False
 
                             if(file == None):
-                                self.simulation(nbBodies = int(input_number), mass_min = input_mass_min, mass_max = input_mass_max)
+                                for box in boxes:
+                                    if box.checked == True:
+                                        self.simulation(nbBodies = int(input_number), mass_min = input_mass_min, mass_max = input_mass_max,algo=box.algo)
                             else:
                                 self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMass(input_mass_min), mass_max = Utilities().bodyMass(input_mass_max))
 
@@ -436,7 +465,7 @@ class ViewTestPygame():
                         elif(active_nb == True):
                             active_nb = not active_nb
                         active_mass_max = not active_mass_max
-
+                
                     Utilities().display_text(self.window_surface, "Fichier incorrect", (self.button_posX, 410), self.poppins_font_30, '#D10000')
 
                     if rect_trash.collidepoint((mouseX,mouseY)):
@@ -450,6 +479,7 @@ class ViewTestPygame():
                             file = controller.getBodyFromCSV(file)
                         else :
                             error = True
+
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
@@ -471,7 +501,6 @@ class ViewTestPygame():
                                 input_mass_min += event.unicode
                             elif(active_mass_max):
                                 input_mass_max += event.unicode
-
             # Draw icon return
             self.window_surface.blit(self.icon_return, ((1200-self.icons_size-25, 800-self.icons_size-25)))
 
@@ -526,7 +555,6 @@ class ViewTestPygame():
             else:
                 self.window_surface.blit(self.icon_import, (self.button_posX + 45, 500 + 35))  
                 Utilities().display_text(self.window_surface, "Import", (self.button_posX + 225, 535), self.poppins_font_35, '#007AB5')
-
             # Update the screen
             pygame.display.update()
 
