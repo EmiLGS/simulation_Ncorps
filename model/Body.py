@@ -26,7 +26,7 @@ class Body():
 
     def __str__(self):
         return "Body : x =  " + str(self.pos[0]) + ", y = " + str(self.pos[1])
-        
+    
     #!! Disgusting function ...
     def getBodyColor(self,size):
         if size >= 1 and size < 4:

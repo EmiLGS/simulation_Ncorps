@@ -194,7 +194,7 @@ class ViewTestPygame():
 
             pygame.display.flip()
 
-    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**24), mass_max = (5.9722*10**24), algo="classic"):
+    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**6), mass_max = (5.9722*10**12), algo="classic"):
         # Use a specific simulation
         sim = None
         if file == None:
@@ -202,10 +202,10 @@ class ViewTestPygame():
                 sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
             elif algo == "barnesHut":
                 #!! Implement max and min mass
-                sim = BarnesHutSimulation(bodyCount=nbBodies, width=self.width, height=self.height)
+                sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height)
             elif algo == "FMM":
                 #!! NOTHING FOR THE MOMENT
-                sim = MoreBodiesSimulation(nbBodies, mass_max, self.width, self.height)
+                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
         else:
             sim = ImportBodiesSimulation(file, len(file))
 
