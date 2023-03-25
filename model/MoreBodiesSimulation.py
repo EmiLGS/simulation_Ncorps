@@ -31,7 +31,6 @@ class MoreBodiesSimulation():
         #Update the speed of both bodies and get their position accordingly
         for body in self.bodies:
             body.computeNewPos()
-        print("\n")
     
     def computeAllForces(self,body):
         body.acc = 0

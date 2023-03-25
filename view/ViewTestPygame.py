@@ -1,4 +1,5 @@
 
+import json
 import time
 import pygame, sys
 import math
@@ -21,7 +22,7 @@ class ViewTestPygame():
         pygame.init()
 
         self.jsonController = JsonController("./data/statistics.json")
-
+        self.nbSim = 0
         # Fonts
         pygame.font.init()
         self.poppins_font_15 = pygame.font.Font("assets/font/Poppins-Regular.ttf", 15)
@@ -234,23 +235,21 @@ class ViewTestPygame():
                     # Click on return
                     if cmpt > 200 :
                         if self.rect_return.collidepoint((mouseX,mouseY)):
-                            # finishTime = time.time() - initTime
-                            # print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
 
                             # Save simulation
-                            # self.jsonController.storeDataJson([finishTime, 0])
-
+                            self.jsonController.storeDataJson([data, 0], self.nbSim)
                             self.run_statistic = True
                             self.run_simulation = False
-                            self.statistic(data)
+                            sim = None
+                            self.statistic()
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
-                        # self.jsonController.storeDataJson([finishTime, 0])
 
                         # Run screen
                         self.run_configurator = True
                         self.run_simulation = False
+                        sim = None
                         self.configuration()
 
             # Draw background
@@ -290,10 +289,16 @@ class ViewTestPygame():
 
             pygame.display.update()
     
-    def statistic(self,data):
+    def statistic(self):
+        # Load data from json file
+        with open("./data/statistics.json", 'r') as file:
+            data = json.load(file)
         # Define here Chart from vendor\Chart
         # FramePerTimeChart
-        FPT = FramePerTimeChart(data[0],data[1])
+        print(data)
+        dataTime = data[0]
+        
+        FPT = FramePerTimeChart(dataTime)
         printFPT = FPT.printChart()
         FPTraw_data = printFPT[0]
         FPTcanvas = printFPT[1]
@@ -438,7 +443,9 @@ class ViewTestPygame():
                             if(file == None):
                                 for box in boxes:
                                     if box.checked == True:
+                                        self.nbSim += 1
                                         self.simulation(nbBodies = int(input_number), mass_min = input_mass_min, mass_max = input_mass_max,algo=box.algo)
+                                        box.checked = False
                             else:
                                 self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMass(input_mass_min), mass_max = Utilities().bodyMass(input_mass_max))
 
