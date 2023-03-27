@@ -14,14 +14,12 @@ class FramePerTimeChart():
         fig.patch.set_facecolor('#E6E6E6')
         # ax = fig.gca()
         ax.set(xlabel='second',ylabel='frame')
-        i = 1
         for k in self.data.keys():
             data = self.data[k]
+            print(k)
             for k2 in data.keys():
-                print("Il y a" + str(i) + "courbe")
                 if k2 == "Temps_calcul":
-                    ax.plot(data[k2][0],data[k2][1])
-            i += 1
+                    plt.plot(data[k2][0],data[k2][1])
 
         canvas = agg.FigureCanvasAgg(fig)
         canvas.draw()
