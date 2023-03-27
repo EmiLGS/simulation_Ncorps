@@ -255,7 +255,7 @@ class ViewTestPygame():
                             
                             self.run_statistic = True
                             self.run_simulation = False
-                            self.statistic(dataTime)
+                            self.statistic()
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
@@ -312,10 +312,8 @@ class ViewTestPygame():
             data = json.load(file)
         # Define here Chart from vendor\Chart
         # FramePerTimeChart
-        print(data)
-        dataTime = data[0]
         
-        FPT = FramePerTimeChart(dataTime)
+        FPT = FramePerTimeChart(data[0])
         printFPT = FPT.printChart()
         FPTraw_data = printFPT[0]
         FPTcanvas = printFPT[1]
@@ -454,7 +452,7 @@ class ViewTestPygame():
                         if(can_run):
                             # Actualize data to store
                             self.numSimulations += 1
-                            print(self.numSimulations)
+                            # print(self.numSimulations)
                             self.nbCorps = int(input_number)
                             self.algo = box.algo
 

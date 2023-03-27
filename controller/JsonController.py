@@ -7,14 +7,13 @@ class JsonController():
     
     # Function to store and add simulation's data in a json file
     def storeDataJson(self, data):
-        print(data)
-        values = {
+        values = [{
             "Numero Simulation":str(data[0]),
             "Nombre corps":str(data[1]),
             "Algorithme":str(data[2]),
-            "Temps calcul":str(data[3]),
+            "Temps calcul": data[3],
             "Approximation":str(data[4]),
-        }
+        }]
 
         array = []
         array.append(values)
