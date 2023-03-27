@@ -8,7 +8,6 @@ from decimal import Decimal
 from tkinter import filedialog
 from controller.VerifyController import VerifyController
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
-from model.ImportBodiesSimulation import *
 from controller.Utilities import Utilities
 from controller.JsonController import JsonController
 from vendor.Checkbox import Checkbox
@@ -208,23 +207,26 @@ class ViewTestPygame():
     def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**6), mass_max = (5.9722*10**12), algo="classic"):
         # Use a specific simulation
         sim = None
-        if file == None:
-            if algo == "classic":
-                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
-            elif algo == "barnesHut":
-                #!! Implement max and min mass
-                sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height)
-            elif algo == "FMM":
-                #!! NOTHING FOR THE MOMENT
-                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
+
+        def importBodies(file):
+            bodies = []
+            for _ in range(len(file)):
+                bodies.append(Body(float(file[_][2])*10**24,file[_][0],file[_][1]))
+            return bodies
+
+        bodies = importBodies(file) if file != None else [] 
+        if algo == "classic":
+            sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
+        elif algo == "barnesHut":
+            sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
+        elif algo == "FMM":
+            sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         else:
             sim = ImportBodiesSimulation(file, len(file))
 
         cmpt = 0
         dataTime = [[],[]]
         initTime = time.time()
-    
-        #sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:
             # Get mouse position
