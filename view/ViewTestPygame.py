@@ -47,6 +47,15 @@ class ViewTestPygame():
         self.run_notice = False
         self.run_configurator = False 
         self.run_statistic = False
+
+        # Data to store
+        self.numSimulations = 0
+        self.nbCorps = 0
+        self.algo = None
+        self.temps = None
+        self.approximation = None
+
+        self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
         
         # Buttons
         self.button_dim = (456,118)
@@ -74,6 +83,8 @@ class ViewTestPygame():
         self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
         
     def menu(self):
+        # Reinitialize json file
+        
 
         while self.run_menu:
             # Get mouse position
@@ -210,7 +221,7 @@ class ViewTestPygame():
             sim = ImportBodiesSimulation(file, len(file))
 
         cmpt = 0
-        data = [[],[]]
+        dataTime = [[],[]]
         initTime = time.time()
     
         #sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
@@ -218,14 +229,15 @@ class ViewTestPygame():
         while self.run_simulation:
             # Get mouse position
             cmpt += 1
-            data[0].append( round(time.time() - initTime, 3) )
-            data[1].append(cmpt)
+            dataTime[0].append(round(time.time() - initTime, 3))
+            dataTime[1].append(cmpt)
             mouseX, mouseY = pygame.mouse.get_pos()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
-                    self.jsonController.deleteJsonFile()
+                    self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                    self.jsonController.storeDataJson(self.data)
                     pygame.quit()
                     sys.exit()
                 
@@ -238,15 +250,19 @@ class ViewTestPygame():
                             # print(f"Il y a eu {cmpt} Frame en {round(finishTime,3)} seconde(s)")
 
                             # Save simulation
-                            # self.jsonController.storeDataJson([finishTime, 0])
-
+                            self.temps = dataTime[0]
+                            self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                            self.jsonController.storeDataJson(self.data)
+                            
                             self.run_statistic = True
                             self.run_simulation = False
-                            self.statistic(data)
+                            self.statistic(dataTime)
 
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
-                        # self.jsonController.storeDataJson([finishTime, 0])
+                        self.temps = dataTime[0]
+                        self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                        self.jsonController.storeDataJson(self.data)
 
                         # Run screen
                         self.run_configurator = True
@@ -318,7 +334,6 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_statistic = False
-                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
 
@@ -411,7 +426,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_configurator = False
-                    self.jsonController.deleteJsonFile()
+                    self.jsonController.storeDataJson(self.data)
                     pygame.quit()
                     sys.exit()
                 # CLICK EVENT
@@ -431,7 +446,12 @@ class ViewTestPygame():
                     # Start simulation
                     if rect_jouer.collidepoint((mouseX,mouseY)):
                         if(can_run):
-                            self.nb_simulations += 1
+                            # Actualize data to store
+                            self.numSimulations += 1
+                            print(self.numSimulations)
+                            self.nbCorps = int(input_number)
+                            self.algo = box.algo
+
                             self.run_simulation = True
                             self.run_configurator = False
 
