@@ -78,15 +78,14 @@ class ViewTestPygame():
         self.icon_import_incorrect = pygame.transform.scale(pygame.image.load("./assets/picture/import_incorrect.png"),(self.icons_size,self.icons_size))
         self.icon_trash = pygame.transform.scale(pygame.image.load("./assets/picture/poubelle.png"),(self.icons_size,self.icons_size))
         self.icon_next = pygame.transform.scale(pygame.image.load("./assets/picture/next.png"),(self.icons_size,self.icons_size))
+        self.icon_cache = pygame.transform.scale(pygame.image.load("./assets/picture/cache.png"),(self.icons_size,self.icons_size))
         
         # Rects
         self.rect_next = pygame.Rect(self.icons_size, 800-self.icons_size-25, self.icons_size, self.icons_size)
         self.rect_return = pygame.Rect(1200-self.icons_size-25, 800-self.icons_size-25, self.icons_size, self.icons_size)
-        
+
     def menu(self):
         # Reinitialize json file
-        
-
         while self.run_menu:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -101,6 +100,7 @@ class ViewTestPygame():
             rect_jouer = pygame.Rect(button_posX, button_posY, self.button_dim[0], self.button_dim[1])
             rect_notice = pygame.Rect(button_posX, button_posY + decalage_Y, self.button_dim[0], self.button_dim[1])
             rect_quitter = pygame.Rect(button_posX, button_posY + decalage_Y*2, self.button_dim[0], self.button_dim[1])
+            rect_cache = pygame.Rect(self.width-60, self.height-60, self.button_dim[0], self.button_dim[1])
             
             # Draw title
             Utilities().display_text(self.window_surface, 'N-Corps', (450,50), self.poppins_font_80, '#007AB5')
@@ -123,6 +123,11 @@ class ViewTestPygame():
                 self.window_surface.blit(self.box_idle, (button_posX, button_posY + decalage_Y*2))
             else:
                 self.window_surface.blit(self.box_pressed, (button_posX, button_posY + decalage_Y*2))
+            # Reset statistics.json cache
+            if not rect_cache.collidepoint(mouseX, mouseY):
+                self.window_surface.blit(self.icon_cache, (self.width-60, self.height-60))
+            else:
+                self.window_surface.blit(self.icon_cache, (self.width-58, self.height-58))
 
             # Draw icons
             self.window_surface.blit(self.icon_play, (button_posX + 45, button_posY + 35))
@@ -150,7 +155,10 @@ class ViewTestPygame():
                         self.run_menu = False
                         self.run_configurator = True
                         self.configuration()
-                    
+                    #Click on Cache
+                    if rect_cache.collidepoint((mouseX,mouseY)):
+                        # Reset statistics.json
+                        self.jsonController.deleteJsonFile()
                     # Click on Notice
                     if rect_notice.collidepoint((mouseX,mouseY)):
                         # Run the screen
@@ -209,7 +217,6 @@ class ViewTestPygame():
     def simulation(self, file=None, nbBodies = 50, mass_min = 6, mass_max = 12, algo="classic"):
         # Use a specific simulation
         sim = None
-        print(file)
 
         def importBodies(file):
             bodies = []
@@ -244,7 +251,7 @@ class ViewTestPygame():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
-                    self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                    self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
                     self.jsonController.storeDataJson(self.data)
                     pygame.quit()
                     sys.exit()
@@ -257,7 +264,7 @@ class ViewTestPygame():
 
                             # Save simulation
                             self.temps = dataTime[0]
-                            self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                            self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
                             self.jsonController.storeDataJson(self.data)
                             
                             self.run_statistic = True
@@ -267,7 +274,7 @@ class ViewTestPygame():
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
                         self.temps = dataTime[0]
-                        self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+                        self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
                         self.jsonController.storeDataJson(self.data)
 
                         # Run screen
@@ -317,10 +324,11 @@ class ViewTestPygame():
         # Load data from json file
         with open("./data/statistics.json", 'r') as file:
             data = json.load(file)
+        
         # Define here Chart from vendor\Chart
         # FramePerTimeChart
         
-        FPT = FramePerTimeChart(data[0])
+        FPT = FramePerTimeChart(data)
         printFPT = FPT.printChart()
         FPTraw_data = printFPT[0]
         FPTcanvas = printFPT[1]
