@@ -9,12 +9,9 @@ class MoreBodiesSimulation():
 
     #If you specify bodies and a bodyCount, it will be taken into account if bodyCount is higher than the number of bodies in bodies
     #If so, the constructor will add random bodies to your initial bodies list to match bodyCount
-    def __init__(self,bodyCount=3, mass_min=(5.9722*10**6), mass_max=(5.9722*10**12), width=None, height=None,bodies=[]):
+    def __init__(self,bodyCount=3, mass_min=6, mass_max=12, width=None, height=None,bodies=[]):
         self.bodyCount = bodyCount if len(bodies) < bodyCount else len(bodies)
         self.bodies = bodies
-
-        mass_min = Utilities().bodyMassExp(mass_min)
-        mass_max = Utilities().bodyMassExp(mass_max)
 
         for _ in range(bodyCount-len(bodies)):
             random_exp = randint(mass_min, mass_max)

@@ -41,6 +41,7 @@ class VerifyController():
     def getBodyFromCSV(self, file):
         tab = []
         row_count = 0
+        
 
         # Define size of the array
         with open(file, 'r') as f:

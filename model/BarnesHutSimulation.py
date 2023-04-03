@@ -8,13 +8,11 @@ class BarnesHutSimulation():
 
     #If you specify bodies and a bodyCount, it will be taken into account if bodyCount is higher than the number of bodies in bodies
     #If so, the constructor will add random bodies to your initial bodies list to match bodyCount
-    def __init__(self,bodyCount=0, mass_min=(5.9722*10**6),mass_max=(5.9722*10**12), width=None, height=None, precision=1, bodies=[]):
+    def __init__(self,bodyCount=0, mass_min=6,mass_max=12, width=None, height=None, precision=1, bodies=[]):
         self.precision = precision
         self.quadTreeWidth = max(width,height)
         self.bodies = bodies
         self.bodyCount = bodyCount if bodyCount > len(bodies) else len(bodies)
-        mass_min = Utilities().bodyMassExp(mass_min)
-        mass_max = Utilities().bodyMassExp(mass_max)
 
         for _ in range(bodyCount-len(bodies)):
             random_exp = randint(mass_min, mass_max)

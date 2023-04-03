@@ -9,9 +9,9 @@ from decimal import Decimal
 from tkinter import filedialog
 from controller.VerifyController import VerifyController
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
-from model.ImportBodiesSimulation import *
 from controller.Utilities import Utilities
 from controller.JsonController import JsonController
+from model.Body import Body
 from vendor.Checkbox import Checkbox
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
 from model.BarnesHutSimulation import BarnesHutSimulation
@@ -206,26 +206,33 @@ class ViewTestPygame():
 
             pygame.display.flip()
 
-    def simulation(self, file=None, nbBodies = 50, mass_min = (5.9722*10**6), mass_max = (5.9722*10**12), algo="classic"):
+    def simulation(self, file=None, nbBodies = 50, mass_min = 6, mass_max = 12, algo="classic"):
         # Use a specific simulation
         sim = None
+        print(file)
+
+        def importBodies(file):
+            bodies = []
+            for _ in range(len(file)):
+                bodies.append(Body(file[_][0],file[_][1],float(file[_][2])))
+            return bodies
+        
         if file == None:
-            if algo == "classic":
-                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
-            elif algo == "barnesHut":
-                #!! Implement max and min mass
-                sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height)
-            elif algo == "FMM":
-                #!! NOTHING FOR THE MOMENT
-                sim = MoreBodiesSimulation(nbBodies, mass_min, mass_max, self.width, self.height)
+            bodies = []
         else:
-            sim = ImportBodiesSimulation(file, len(file))
+            bodies = importBodies(file)
+            nbBodies = len(bodies)
+
+        if algo == "classic":
+            sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
+        elif algo == "barnesHut":
+            sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
+        elif algo == "FMM":
+            sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
 
         cmpt = 0
         dataTime = [[],[]]
         initTime = time.time()
-    
-        #sim = BarnesHutSimulation(nbBodies ,mass,self.width,self.height,precision=1)
 
         while self.run_simulation:
             # Get mouse position
@@ -452,7 +459,6 @@ class ViewTestPygame():
                         if(can_run):
                             # Actualize data to store
                             self.numSimulations += 1
-                            # print(self.numSimulations)
                             self.nbCorps = int(input_number)
                             self.algo = box.algo
 
@@ -462,11 +468,9 @@ class ViewTestPygame():
                             if(file == None):
                                 for box in boxes:
                                     if box.checked == True:
-                                        self.nbSim += 1
-                                        self.simulation(nbBodies = int(input_number), mass_min = input_mass_min, mass_max = input_mass_max,algo=box.algo)
-                                        box.checked = False
+                                        self.simulation(nbBodies = int(input_number), mass_min = Utilities().bodyMassExp(input_mass_min), mass_max = Utilities().bodyMassExp(input_mass_max),algo=box.algo)
                             else:
-                                self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMass(input_mass_min), mass_max = Utilities().bodyMass(input_mass_max))
+                                self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMassExp(input_mass_min), mass_max = Utilities().bodyMassExp(input_mass_max))
 
                     # Type text input nb
                     if rect_input.collidepoint((mouseX,mouseY)):
@@ -500,9 +504,11 @@ class ViewTestPygame():
 
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
-                        file = filedialog.askopenfile(mode = "r",initialdir="./data", title="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf")))
+                        file = filedialog.askopenfile(mode = "r",initialdir="./data", title="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf"))).name
+                        
                         if file != None:
                             file = controller.getBodyFromCSV(file)
+                            print(*file)
                         else :
                             error = True
 
