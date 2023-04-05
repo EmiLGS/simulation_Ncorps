@@ -3,7 +3,7 @@ import matplotlib
 import matplotlib.backends.backend_agg as agg
 import matplotlib.pyplot as plt
 import pylab
-class FramePerTimeChart():
+class PrecisionChart():
     def __init__(self,data):
         self.data = data
 
@@ -12,11 +12,11 @@ class FramePerTimeChart():
         # matplotlib.use("Agg")
         fig, ax = plt.subplots()
         ax.legend(loc='lower right')
-        ax.set_title("Time chart")
+        ax.set_title("Precision Chart")
         # fig = pylab.figure( figsize=[4.5, 4.5] )
         fig.patch.set_facecolor('#E6E6E6')
         # ax = fig.gca()
-        ax.set(xlabel='second',ylabel='frame')
+        ax.set(xlabel='second',ylabel='error')
         for i in range(len(self.data)):
             for j in range(len(self.data[i])):
                 data = self.data[i][j]
@@ -25,7 +25,7 @@ class FramePerTimeChart():
                         n = v
                     if k == "Algorithme":
                         algo = v
-                    if k == "Temps calcul":
+                    if k == "Precision":
                         # print(algo+n)
                         ax.plot(v[0],v[1],label=algo+n)
         ax.legend()

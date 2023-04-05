@@ -6,7 +6,7 @@ import math
 
 from time import sleep
 from decimal import Decimal
-from tkinter import filedialog
+# from tkinter import filedialog
 from controller.VerifyController import VerifyController
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from controller.Utilities import Utilities
@@ -14,6 +14,7 @@ from controller.JsonController import JsonController
 from model.Body import Body
 from vendor.Checkbox import Checkbox
 from vendor.chart.FramePerTimeChart import FramePerTimeChart
+from vendor.chart.PrecisionChart import PrecisionChart
 from model.BarnesHutSimulation import BarnesHutSimulation
 import numpy as np
 
@@ -329,6 +330,7 @@ class ViewTestPygame():
         # FramePerTimeChart
         
         FPT = FramePerTimeChart(data)
+        Prec = PrecisionChart(data)
         printFPT = FPT.printChart()
         FPTraw_data = printFPT[0]
         FPTcanvas = printFPT[1]
