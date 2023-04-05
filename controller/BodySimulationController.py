@@ -18,3 +18,5 @@ class BodySimulationController() :
     # Create a string of the Second body
     def createSecondBodyString(self):
         return str(np.sqrt(self.simulation.body2.spd[0]**2 + self.simulation.body2.spd[1]**2))
+    
+    #! TODO delete ce fichier je crois.

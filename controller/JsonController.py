@@ -14,7 +14,7 @@ class JsonController():
             "Nombre corps":str(data[1]),
             "Algorithme":str(data[2]),
             "Temps calcul": data[3],
-            "Approximation":str(data[4]),
+            "Precision":data[4],
         }]
 
         array = []
@@ -39,3 +39,7 @@ class JsonController():
         self.cpt = 0
         with open(self.file, "w") as json_file:
                 json.dump([], json_file)
+
+    def getNumberOfItems(self):
+        with open(self.file, 'r') as f:
+            return len(json.load(f))

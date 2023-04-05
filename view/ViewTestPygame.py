@@ -6,7 +6,7 @@ import math
 
 from time import sleep
 from decimal import Decimal
-# from tkinter import filedialog
+from tkinter import filedialog
 from controller.VerifyController import VerifyController
 from model.MoreBodiesSimulation import  MoreBodiesSimulation
 from controller.Utilities import Utilities
@@ -21,7 +21,6 @@ import numpy as np
 class ViewTestPygame():
     def __init__(self):
         pygame.init()
-
         self.jsonController = JsonController("./data/statistics.json")
         self.nbSim = 0
         # Fonts
@@ -55,9 +54,9 @@ class ViewTestPygame():
         self.nbCorps = 0
         self.algo = None
         self.temps = None
-        self.approximation = None
+        self.precision = None
 
-        self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.approximation]
+        self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.precision]
         
         # Buttons
         self.button_dim = (456,118)
@@ -218,6 +217,7 @@ class ViewTestPygame():
     def simulation(self, file=None, nbBodies = 50, mass_min = 6, mass_max = 12, algo="classic"):
         # Use a specific simulation
         sim = None
+        precList = None
         self.algo = algo
         def importBodies(file):
             bodies = []
@@ -228,12 +228,15 @@ class ViewTestPygame():
         if file == None:
             bodies = []
         else:
+            #File is simply the name of the file, the second element is the bodies over each frame (similar to dataTime), the third is the list of the bodies at the 200th frame of the simulation
+            precList = [file, [[],None], None]
             bodies = importBodies(file)
             nbBodies = len(bodies)
 
         if algo == "classic":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         elif algo == "barnesHut":
+            print("Sisi tkt")
             sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         elif algo == "FMM":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
@@ -247,12 +250,14 @@ class ViewTestPygame():
             cmpt += 1
             dataTime[0].append(round(time.time() - initTime, 3))
             dataTime[1].append(cmpt)
+            if file != None: precList[1][0].append(tuple(sim.bodies[0].pos))
             mouseX, mouseY = pygame.mouse.get_pos()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_simulation = False
-                    self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
+                    precList[1][1] = dataTime[1]
+                    self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, precList]
                     self.jsonController.storeDataJson(self.data)
                     pygame.quit()
                     sys.exit()
@@ -265,7 +270,8 @@ class ViewTestPygame():
 
                             # Save simulation
                             self.temps = dataTime[0]
-                            self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
+                            if file != None : precList[1][1] = dataTime[1]
+                            self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, precList]
                             self.jsonController.storeDataJson(self.data)
                             
                             self.run_statistic = True
@@ -275,7 +281,8 @@ class ViewTestPygame():
                     if self.rect_next.collidepoint((mouseX,mouseY)):
                         # Save simulation
                         self.temps = dataTime[0]
-                        self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, self.approximation]
+                        if file != None : precList[1][1] = dataTime[1]
+                        self.data = [self.numSimulations, self.nbCorps, self.algo, dataTime, precList]
                         self.jsonController.storeDataJson(self.data)
 
                         # Run screen
@@ -291,7 +298,7 @@ class ViewTestPygame():
             mass_min_r = math.floor(math.log(sim.bodies[0].mass, 10))
             mass_max_r = math.floor(math.log(sim.bodies[0].mass, 10))
             # Values for the size in pixels of the bodies
-            minp = 1
+            minp = 2
             maxp = 10
 
             # Get min and max exp values for all bodies
@@ -317,6 +324,7 @@ class ViewTestPygame():
 
             # Draw next icon
             if cmpt > 200 :
+                if file != None and precList[2] == None: precList[2] = tuple(map(lambda x : tuple(x.pos), sim.bodies))
                 self.window_surface.blit(self.icon_next, ((1200-self.icons_size-25, 800-self.icons_size-25)))
 
             pygame.display.update()
@@ -330,10 +338,19 @@ class ViewTestPygame():
         # FramePerTimeChart
         
         FPT = FramePerTimeChart(data)
-        Prec = PrecisionChart(data)
         printFPT = FPT.printChart()
         FPTraw_data = printFPT[0]
         FPTcanvas = printFPT[1]
+
+        Prec = PrecisionChart(data)
+        printPrec = Prec.printChart()
+        print(printPrec[1])
+        if printPrec[0] == None:
+            drawPrecision = False
+        else:
+            drawPrecision = True
+            PrecRawData = printPrec[0]
+            PrecCanvas = printPrec[1]
         # END FramePerTimeChart
         # END CHART
 
@@ -349,10 +366,15 @@ class ViewTestPygame():
             FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
             self.window_surface.blit(FPTsurf, (20,20))
 
+            if drawPrecision:
+                PrecSize = PrecCanvas.get_width_height()
+                PrecSurf = pygame.image.fromstring(PrecRawData, PrecSize, "RGB")
+                self.window_surface.blit(PrecSurf, (500,20))
+
             # Display title
             Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
             Utilities().display_text(self.window_surface, "La simulation contenait " + str(50) + "corps pour un total de " + str((50 * (50 - 1))/2) + "déplacement(s) par frame(s)", (200, 500 ), self.poppins_font_15, '#007AB5')
-
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run_statistic = False
@@ -481,7 +503,9 @@ class ViewTestPygame():
                                     if box.checked == True:
                                         self.simulation(nbBodies = int(input_number), mass_min = Utilities().bodyMassExp(input_mass_min), mass_max = Utilities().bodyMassExp(input_mass_max),algo=box.algo)
                             else:
-                                self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMassExp(input_mass_min), mass_max = Utilities().bodyMassExp(input_mass_max))
+                                for box in boxes:
+                                    if box.checked == True:
+                                        self.simulation(file, nbBodies = int(input_number), mass_min = Utilities().bodyMassExp(input_mass_min), mass_max = Utilities().bodyMassExp(input_mass_max), algo=box.algo)
 
                     # Type text input nb
                     if rect_input.collidepoint((mouseX,mouseY)):
@@ -515,6 +539,7 @@ class ViewTestPygame():
 
                     # Import file
                     if rect_import.collidepoint((mouseX, mouseY)):
+
                         file = filedialog.askopenfile(mode = "r",initialdir="./data", title="selectionner", filetypes=(("Fichier CSV","*.csv"),("Fichier PDF","*.pdf"))).name
                         
                         if file != None:
