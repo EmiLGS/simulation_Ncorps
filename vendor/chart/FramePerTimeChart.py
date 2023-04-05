@@ -26,7 +26,7 @@ class FramePerTimeChart():
                     if k == "Algorithme":
                         algo = v
                     if k == "Temps calcul":
-                        print(algo+n)
+                        # print(algo+n)
                         ax.plot(v[0],v[1],label=algo+n)
         ax.legend()
         canvas = agg.FigureCanvasAgg(fig)

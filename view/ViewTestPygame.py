@@ -217,7 +217,7 @@ class ViewTestPygame():
     def simulation(self, file=None, nbBodies = 50, mass_min = 6, mass_max = 12, algo="classic"):
         # Use a specific simulation
         sim = None
-
+        self.algo = algo
         def importBodies(file):
             bodies = []
             for _ in range(len(file)):
@@ -349,6 +349,7 @@ class ViewTestPygame():
 
             # Display title
             Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
+            Utilities().display_text(self.window_surface, "La simulation contenait " + str(50) + "corps pour un total de " + str((50 * (50 - 1))/2) + "déplacement(s) par frame(s)", (200, 500 ), self.poppins_font_15, '#007AB5')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
