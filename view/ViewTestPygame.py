@@ -143,7 +143,6 @@ class ViewTestPygame():
                 # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
-                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
 
@@ -168,7 +167,6 @@ class ViewTestPygame():
 
                     # Click on Quit
                     if rect_quitter.collidepoint((mouseX,mouseY)):
-                        self.jsonController.deleteJsonFile()
                         sys.exit()
             
             
@@ -199,7 +197,6 @@ class ViewTestPygame():
                 # Exit
                 if event.type == pygame.QUIT:
                     self.run_notice = False
-                    self.jsonController.deleteJsonFile()
                     pygame.quit()
                     sys.exit()
                 
