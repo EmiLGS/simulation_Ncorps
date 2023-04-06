@@ -57,6 +57,9 @@ class ViewTestPygame():
         self.precision = None
 
         self.data = [self.numSimulations, self.nbCorps, self.algo, self.temps, self.precision]
+
+        self.nbInteract = 0
+        self.averageInteract = 0
         
         # Buttons
         self.button_dim = (456,118)
@@ -222,22 +225,27 @@ class ViewTestPygame():
         def importBodies(file):
             bodies = []
             for _ in range(len(file)):
-                bodies.append(Body(file[_][0],file[_][1],float(file[_][2])))
+                body = Body(file[_][0],file[_][1],float(file[_][2]))
+                if len(file[_]) > 3:
+                    body.spd = np.array([float(file[_][3]),float(file[_][4])])
+                bodies.append(body)
+
             return bodies
         
         if file == None:
             bodies = []
         else:
-            #File is simply the name of the file, the second element is the bodies over each frame (similar to dataTime), the third is the list of the bodies at the 200th frame of the simulation
+            #File is simply the name of the file, the second element is the bodies over each frame (similar to dataTime), the third is the list of the bodies at the 20th frame of the simulation
             precList = [file, [[],None], None]
             bodies = importBodies(file)
             nbBodies = len(bodies)
+            self.nbCorps = nbBodies
 
         if algo == "classic":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         elif algo == "barnesHut":
             print("Sisi tkt")
-            sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
+            sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies, precision=1)
         elif algo == "FMM":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
 
@@ -298,7 +306,7 @@ class ViewTestPygame():
             mass_min_r = math.floor(math.log(sim.bodies[0].mass, 10))
             mass_max_r = math.floor(math.log(sim.bodies[0].mass, 10))
             # Values for the size in pixels of the bodies
-            minp = 2
+            minp = 3
             maxp = 10
 
             # Get min and max exp values for all bodies
@@ -318,14 +326,21 @@ class ViewTestPygame():
                 else :
                     nombreSortie = ((maxp - minp) / (mass_max_r - mass_min_r)) * (math.floor(math.log(body.mass, 10)) - mass_min_r) + minp
                     pygame.draw.circle(self.window_surface,body.getBodyColor(int(nombreSortie)),(body.pos[0],body.pos[1]), int(nombreSortie))
-            sim.advance()
 
             self.window_surface.blit(self.icon_return, ((self.icons_size, 800-self.icons_size-25)))
 
+            # Store Bodies For Precision at 20 frames
+            if cmpt == 20:
+                if file != None and precList[2] == None: precList[2] = tuple(map(lambda x : tuple(x.pos), sim.bodies))
+
             # Draw next icon
             if cmpt > 200 :
-                if file != None and precList[2] == None: precList[2] = tuple(map(lambda x : tuple(x.pos), sim.bodies))
                 self.window_surface.blit(self.icon_next, ((1200-self.icons_size-25, 800-self.icons_size-25)))
+
+            sim.advance()
+
+            self.nbInteract += sim.nbInteract
+            self.averageInteract= self.nbInteract/cmpt
 
             pygame.display.update()
     
@@ -347,10 +362,12 @@ class ViewTestPygame():
         print(printPrec[1])
         if printPrec[0] == None:
             drawPrecision = False
+            errMessPrec = printPrec[1]
         else:
             drawPrecision = True
             PrecRawData = printPrec[0]
             PrecCanvas = printPrec[1]
+            averagePrec20 = printPrec[2]
         # END FramePerTimeChart
         # END CHART
 
@@ -364,16 +381,20 @@ class ViewTestPygame():
             # PRINT FPT
             FPTsize = FPTcanvas.get_width_height()
             FPTsurf = pygame.image.fromstring(FPTraw_data, FPTsize, "RGB")
-            self.window_surface.blit(FPTsurf, (20,20))
+            self.window_surface.blit(FPTsurf, (20,30))
 
             if drawPrecision:
                 PrecSize = PrecCanvas.get_width_height()
                 PrecSurf = pygame.image.fromstring(PrecRawData, PrecSize, "RGB")
-                self.window_surface.blit(PrecSurf, (500,20))
+                self.window_surface.blit(PrecSurf, (500,30))
+                Utilities().display_text(self.window_surface, "L'erreur moyenne au bout de 20 frames etait de " + str(averagePrec20), (600,500), self.poppins_font_15, '#007AB5')
+            else:
+                Utilities().display_text(self.window_surface, errMessPrec, (750,250), self.poppins_font_15, '#007AB5')
+
 
             # Display title
             Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
-            Utilities().display_text(self.window_surface, "La simulation contenait " + str(50) + "corps pour un total de " + str((50 * (50 - 1))/2) + "déplacement(s) par frame(s)", (200, 500 ), self.poppins_font_15, '#007AB5')
+            Utilities().display_text(self.window_surface, "La simulation contenait " + str(self.nbCorps) + " corps et a eu un total de " + str(self.averageInteract) + " calculs de force par frame", (20, 600 ), self.poppins_font_15, '#007AB5')
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

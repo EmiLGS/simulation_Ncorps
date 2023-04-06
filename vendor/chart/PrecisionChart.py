@@ -10,6 +10,7 @@ class PrecisionChart():
 
     # Create a render of the chart and return it
     def printChart(self):
+        n=0
         # matplotlib.use("Agg")
         fig, ax = plt.subplots()
         ax.legend(loc='lower right')
@@ -38,28 +39,37 @@ class PrecisionChart():
             for j in range(len(self.data[i])):
                 data = self.data[i][j]
                 if data.get("Precision") == None or data.get("Precision")[0] != referenceInitialState: continue
+                n += 1
                 for k,v in data.items():
-                    if k == "Numero Simulation":
-                        n = v
                     if k == "Algorithme":
                         algo = v
                     if k == "Precision":
                         v = v[1]
                         frames = v[1][:lenFrames]
-                        ax.plot(v[1], self.bodiesToError(v[0],referenceSimulation.get("Precision")[1][0]),label=algo+n)
+                        ax.plot(frames, self.bodiesToErrorFromRef(v[0],referenceSimulation.get("Precision")[1][0]),label=algo+str(n))
+
+        
         ax.legend()
         canvas = agg.FigureCanvasAgg(fig)
         canvas.draw()
         renderer = canvas.get_renderer()
         raw_data = renderer.tostring_rgb()
-        return raw_data,canvas
+        return raw_data,canvas,self.getAverageErrorAt20(data.get("Precision")[2], referenceSimulation.get("Precision")[2])
 
-    def bodiesToError(self, bodies,reference):
+    def getAverageErrorAt20(self, bodies, reference):
+        if bodies == None: return None
+        res = 0
+        length = min(len(bodies), len(reference))
+        for i in range(length):
+            res += np.sqrt((bodies[i][0]-reference[i][0])**2 + (bodies[i][1]-reference[i][1])**2)
+        return res/length
+        
+
+    def bodiesToErrorFromRef(self, bodies, reference):
         res = []
         for i in range(min(len(bodies),len(reference))):
-            precX = np.abs(bodies[i][0]-reference[i][0])/reference[i][0]*100
-            precY = np.abs(bodies[i][1]-reference[i][1])/reference[i][1]*100
-            res.append((precX+precY)/2)
+            precision = np.sqrt((bodies[i][0]-reference[i][0])**2 + (bodies[i][1]-reference[i][1])**2)/np.sqrt(reference[i][0]**2 + reference[i][1]**2)*100
+            res.append(precision)
         return res
     
         #return [np.abs(bodies[i]-reference[i])/reference[i]*100 for i in range(len(bodies))]
