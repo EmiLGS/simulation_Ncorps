@@ -18,10 +18,13 @@ class MoreBodiesSimulation():
             random_float = float(randint(1,9))
             random_mass = float(random_float*10**random_exp)
             self.bodies.append(Body(randint(20,width-20),randint(20,height-20), random_mass))
+        
+        self.nbInteract = 0
 
     
     def advance(self):
-
+        self.nbInteract = 0
+        
         for body in self.bodies:
             self.computeAllForces(body)
 
@@ -33,6 +36,7 @@ class MoreBodiesSimulation():
         body.acc = 0
         for otherBody in self.bodies:
             if otherBody != body:
+                self.nbInteract+=1
                 a = otherBody.pos[0] - body.pos[0]
                 b = otherBody.pos[1] - body.pos[1]
                 d = np.sqrt(a**2 + b**2)

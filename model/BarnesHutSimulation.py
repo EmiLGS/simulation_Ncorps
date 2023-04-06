@@ -20,6 +20,7 @@ class BarnesHutSimulation():
             random_mass = float(random_float*10**random_exp)
             self.bodies.append(Body(randint(20,width-20),randint(20,height-20), random_mass))
         # print(*bodies)
+        self.nbInteract = 0
 
     def advance(self):
         
@@ -50,4 +51,6 @@ class BarnesHutSimulation():
         #Update the speed of both bodies and get their position accordingly
         for body in self.bodies:
             body.computeNewPos()
+        
+        self.nbInteract = QuadTree.nbInteract
 

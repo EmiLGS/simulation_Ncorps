@@ -113,6 +113,7 @@ class Node():
         d = np.sqrt(a**2 + b**2)
 
         Vdir = np.array([a,b])
+        QuadTree.nbInteract += 1
         force = ((GlobVar.G * otherBody.mass * body.mass)/d**3)*Vdir
         # print("Forc de", body, "par", otherBody,"=",force)
         return force
@@ -133,6 +134,8 @@ class Node():
         return res
 
 class QuadTree():
+    nbInteract = 0
+
     def __init__(self, width, xShift, yShift, bodies=[]):
         self.xShift = xShift
         self.yShift = yShift
@@ -156,6 +159,7 @@ class QuadTree():
         self.node0.computeMass()
     
     def computeForce(self, body, precision):
+        QuadTree.nbInteract = 0
         return self.node0.computeForce(self.realBodiesToFakeBodies[body], precision)
     
     def __str__(self):

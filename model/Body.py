@@ -15,6 +15,7 @@ class Body():
 
     def computeNewPos(self):
         #TODO check if accMax is good enough or if there is a way to improve it
+        #! Temporarily removing it seems to work a bit. Don't use masses too big or everything goes boom
         # accMag = np.sqrt(self.acc[0]**2 + self.acc[1]**2)
         # accMax = np.inf
         # self.acc = self.acc if accMag < accMax else self.acc/accMag * np.array([accMax,accMax])
