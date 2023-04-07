@@ -181,8 +181,9 @@ class ViewTestPygame():
                 "Configuration : \n" +
                 "- Nombres de corps \n" +
                 "- Masses minimums et maximums \n" +
-                "- Import : vous pouvez importer directement des corps avec des caractéristiques précises par le biais d'un tableau excel. Pour ce faire il vous suffit de télécharger le modèle de fichier excel fournit sur le menu de configuration, le remplir avec vos informations puis le fournir en cliquant sur le bouton import.")
-
+                "- Algorithmes : Vous pouvez sélectionner l'algorithme désiré en cochant la checkbox correspondante. \n" +
+                "- Import : vous pouvez importer directement des corps avec des caractéristiques précises par le biais d'un tableau excel. Pour ce faire il vous suffit de modifier le modèle de fichier excel fournit sur le menu de configuration, le remplir avec vos informations puis le redonner en cliquant sur le bouton import.")
+        
         while self.run_notice:
             # Get mouse position
             mouseX, mouseY = pygame.mouse.get_pos()

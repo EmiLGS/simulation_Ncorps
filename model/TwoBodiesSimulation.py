@@ -5,6 +5,12 @@ from model.GlobVar import GlobVar
 class TwoBodiesSimulation():
 
     def __init__(self,body1=None,body2=None):
+        """
+         Initialize the object with two bodies. This is the method to be called by the constructor. It sets the mass and position of the bodies
+         
+         @param body1 - The first body to be used in the calculation. If not specified a 400x400 body will be created.
+         @param body2 - The second body to be used in the calculation. If not specified a 200x400 body will be created
+        """
         self.body1 = body1 if body1 else Body(400,400)
         self.body2 = body2 if body2 else Body(200,400)
         self.bodies = [body1,body2]
@@ -15,12 +21,27 @@ class TwoBodiesSimulation():
         self.body2.spd = np.array([0.0,vitin])
 
     def getFirstBody(self):
+        """
+         Returns the first body of the body chain. This is used to determine the position of the body's first element in the chain.
+         
+         
+         @return the first body of the body chain or None if there is no body chain at the point of view
+        """
         return self.body1
 
     def getSecondBody(self):
+        """
+         Get the second body of this message. This is the body that is used to send the message to the client when it is sent to the server.
+         
+         
+         @return a L { twisted. internet. defer. Deferred } which fires with the body as its sole argument
+        """
         return self.body2
 
     def advance(self):
+        """
+         Advance the position of the bodies by the force defined in GlobVar. G and the velocity of the
+        """
         #Get distance between 2 bodies
         a = self.body2.pos[0] - self.body1.pos[0]
         b = self.body2.pos[1] - self.body1.pos[1]
