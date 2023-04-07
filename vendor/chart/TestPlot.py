@@ -15,13 +15,12 @@ class TestPlot():
         """
          Print the chart and return the raw data and canvas. This is useful for debugging and to get a more readable representation of the chart
          
-         
-         @return tuple of raw data and
+         @return tuple of raw data and the canvas
         """
         matplotlib.use("Agg")
         fig = pylab.figure( figsize=[4, 4], dpi=100)
         ax = fig.gca()
-        ax.plot(self.data);
+        ax.plot(self.data)
         canvas = agg.FigureCanvasAgg(fig)
         canvas.draw()
         renderer = canvas.get_renderer()

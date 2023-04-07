@@ -1,5 +1,5 @@
-from view.ViewTestPygame import ViewTestPygame
-from view.testChart import TestChart
+from view.ViewApp import ViewTestPygame
+from view.ViewFirstTestChart import TestChart
 import pygame, sys
 
 if __name__ == '__main__':

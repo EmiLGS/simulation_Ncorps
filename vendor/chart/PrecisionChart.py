@@ -18,7 +18,6 @@ class PrecisionChart():
         """
          Print chart of Precision. This is a function to be used in conjunction with plot (). It returns a tuple ( chart_title chart_text ) where chart_title is the title of the chart and chart_text is a string that describes the chart.
          
-         
          @return ( chart_title chart_text ) chart_title is a string describing the chart and chart_text is a descriptive
         """
         n=0

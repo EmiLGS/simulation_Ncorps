@@ -1,7 +1,7 @@
 class Utilities():
     def __init__(self):
         """
-         Initialize the class by setting width and height to 1200x800. @ In None @ Out
+         Initialize the class by setting width and height to 1200x800.
         """
         self.width = 1200
         self.height = 800
@@ -14,8 +14,8 @@ class Utilities():
              @param surface - Surface to draw on.
              @param text - Text to display. Each line is separated by a space.
              @param pos - X and Y position of the text. This is a tuple ( x y ) where x is the horizontal position and y is the vertical position.
-             @param font - Font to use for rendering the text. The font must have a
-             @param color - Color to use for rendering
+             @param font - Font to use for rendering the text.
+             @param color - Color to use for rendering.
             """
             collection = [word.split(' ') for word in text.splitlines()]
             space = font.size(' ')[0]

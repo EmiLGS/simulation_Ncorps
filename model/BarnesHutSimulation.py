@@ -15,8 +15,8 @@ class BarnesHutSimulation():
          @param bodyCount - The number of bodies to generate. Default is 0.
          @param mass_min - The minimum mass of the bodies. Default is 6.
          @param mass_max - The maximum mass of the bodies. Default is 12.
-         @param width - The width of the quadtree. Default is None.
-         @param height - The height of the quadtree. Default is None.
+         @param width - The width of the window. Default is None.
+         @param height - The height of the window. Default is None.
          @param precision - The number of decimal places to use for floating point numbers. Default is 1.
          @param bodies - A list of Body objects that will be used to generate the quadtree
         """

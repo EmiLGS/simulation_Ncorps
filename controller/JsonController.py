@@ -14,9 +14,9 @@ class JsonController():
     # Function to store and add simulation's data in a json file
     def storeDataJson(self, data):
         """
-         Stores data in json file. Stores data in json file and increases cpt by 1. If file exists it is loaded and the data is stored in array
+         Stores data in json file and increases cpt by 1. If file exists it is loaded and the data is stored in array
          
-         @param data - array with data to
+         @param data - array with data to exploit
         """
         self.cpt += 1
         values = [{
@@ -46,8 +46,7 @@ class JsonController():
         """
          Returns the number of simulations. It is used to determine the number of times the simulation was run.
          
-         
-         @return int number of simulation ( 1 if simulation failed ) or None if not found in the file ( in which case the number will be 1
+         @return int number of simulation ( 1 if simulation failed ) or None if not found in the file ( in which case the number will be 1 )
         """
         with open(self.file, 'r') as file:
             data = json.load(file)
@@ -55,7 +54,7 @@ class JsonController():
     # Function to reset the file
     def deleteJsonFile(self):
         """
-         Delete json file to avoid re - reading it every time it is called. @ In None @ Out
+         Delete json file to avoid re - reading it every time it is called.
         """
         self.cpt = 0
         with open(self.file, "w") as json_file:
@@ -64,7 +63,6 @@ class JsonController():
     def getNumberOfItems(self):
         """
          Returns the number of items in the cache. This is used to determine how many items are cached for a given set of data.
-         
          
          @return The number of items in the cache as an integer or None if there are no items in the cache
         """

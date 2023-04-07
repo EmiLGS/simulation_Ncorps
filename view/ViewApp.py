@@ -242,7 +242,6 @@ class ViewTestPygame():
         if algo == "classic":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         elif algo == "barnesHut":
-            print("Sisi tkt")
             sim = BarnesHutSimulation(bodyCount=nbBodies,mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
         elif algo == "FMM":
             sim = MoreBodiesSimulation(bodyCount=nbBodies, mass_min=mass_min, mass_max=mass_max, width=self.width, height=self.height, bodies=bodies)
