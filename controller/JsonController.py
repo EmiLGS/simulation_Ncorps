@@ -4,7 +4,7 @@ import random
 class JsonController():
     def __init__(self, file):
         self.file = file
-        self.cpt = 0
+        self.cpt = self.getSimulationNumber()
     
     # Function to store and add simulation's data in a json file
     def storeDataJson(self, data):
@@ -31,9 +31,10 @@ class JsonController():
             with open(self.file, "w") as json_file:
                 json.dump(array, json_file, indent=None, separators=(',',': '))
 
-    # def getSimulationNumber(self):
-    #     data = json.load(self.file)
-    #     for 
+    def getSimulationNumber(self):
+        with open(self.file, 'r') as file:
+            data = json.load(file)
+        return 1 if data == [] else data[-1][-1]["Numero Simulation"]
     # Function to reset the file
     def deleteJsonFile(self):
         self.cpt = 0
