@@ -10,8 +10,7 @@ class MoreBodiesSimulation():
     #If you specify bodies and a bodyCount, it will be taken into account if bodyCount is higher than the number of bodies in bodies
     #If so, the constructor will add random bodies to your initial bodies list to match bodyCount
     def __init__(self,bodyCount=3, mass_min=6, mass_max=12, width=None, height=None,bodies=[]):
-        """
-         Initializes the object with random data. This is the method that will be called by the object when it is created
+        """         
          
          @param bodyCount - The number of bodies to create
          @param mass_min - The minimum mass of the bodies in kilograms
@@ -50,7 +49,7 @@ class MoreBodiesSimulation():
     
     def computeAllForces(self,body):
         """
-         Compute forces between all bodies. This is used to determine how much a body is facing the ground
+         Compute forces of a body
          
          @param body - Body to compute forces
         """

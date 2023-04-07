@@ -1,7 +1,7 @@
 from controller.Utilities import Utilities
 from model.Body import Body
 from random import randint
-from model.QuadTreeBarnesHut import QuadTree
+from model.QuadTreeBarnesHut import QuadTreeBarnesHut
 import numpy as np
 
 class BarnesHutSimulation():
@@ -15,10 +15,11 @@ class BarnesHutSimulation():
          @param bodyCount - The number of bodies to generate. Default is 0.
          @param mass_min - The minimum mass of the bodies. Default is 6.
          @param mass_max - The maximum mass of the bodies. Default is 12.
-         @param width - The width of the window. Default is None.
-         @param height - The height of the window. Default is None.
-         @param precision - The number of decimal places to use for floating point numbers. Default is 1.
-         @param bodies - A list of Body objects that will be used to generate the quadtree
+         Those masses reprensant the exposant in the formula 1*10**exposant. 
+         @param width - The width of the screen
+         @param height - The height of the screen
+         @param precision - The precision
+         @param bodies - A list of Body objects that will be used to generate the simulation
         """
         self.precision = precision
         self.quadTreeWidth = max(width,height)
@@ -57,7 +58,7 @@ class BarnesHutSimulation():
 
         quadWidth = max(maxY - minY, maxX - minX)
 
-        quadtree = QuadTree(quadWidth,-minX,-minY, self.bodies)
+        quadtree = QuadTreeBarnesHut(quadWidth,-minX,-minY, self.bodies)
 
         # print("\n")
 
@@ -70,9 +71,8 @@ class BarnesHutSimulation():
             body.addForce(force)
             
         #Update the speed of both bodies and get their position accordingly
-        # Compute new position of all bodies in the list of bodies.
         for body in self.bodies:
             body.computeNewPos()
         
-        self.nbInteract = QuadTree.nbInteract
+        self.nbInteract = QuadTreeBarnesHut.nbInteract
 

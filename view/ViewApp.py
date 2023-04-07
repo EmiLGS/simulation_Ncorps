@@ -391,7 +391,7 @@ class ViewTestPygame():
 
             # Display title
             Utilities().display_text(self.window_surface, 'Statistiques', (self.width//2 - 150, -20), self.poppins_font_80, '#007AB5')
-            Utilities().display_text(self.window_surface, "La simulation contenait " + str(self.nbCorps) + " corps pour un total de " + str((self.nbCorps * (self.nbCorps - 1))/2) + "déplacement(s) par frame(s)", (200, 500 ), self.poppins_font_15, '#007AB5')
+            Utilities().display_text(self.window_surface, "La simulation contenait " + str(self.nbCorps) + " corps pour un total de " + str(self.averageInteract) + "calcul de force par frame", (100, 600 ), self.poppins_font_15, '#007AB5')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

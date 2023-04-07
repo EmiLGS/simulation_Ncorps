@@ -7,12 +7,12 @@ from model.GlobVar import GlobVar
 class Node():
     def __init__(self,x0,y0,width, bodies):
         """
-         Initialize the mass model. This is called by __init__ and should not be called directly. Instead you should use
+         Initialize the Node.You should use
          
-         @param x0 - x position of the center of mass
-         @param y0 - y position of the center of mass ( in microns )
-         @param width - width of the mass ( in metres )
-         @param bodies - list of bodies that make up the mass
+         @param x0 - x position of the top left of the Node
+         @param y0 - y position of the top left of the Node
+         @param width - width of the Node
+         @param bodies - list of bodies that are in the Node
         """
         self.x0 = x0
         self.y0 = y0
@@ -25,7 +25,7 @@ class Node():
     #si c'est une feuille(carré) on a besoin des points qu'elle contient 
     def getBodies(self):
         """
-         Returns the bodies associated with this message. This is a copy of the : attr : ` bodies ` attribute.
+         Returns the bodies in the Node
          
          
          @return a list of : class : ` Body ` objects or None if there are no bodies associated with this
@@ -34,7 +34,7 @@ class Node():
 
     def division(self):
         """
-         Divide the body into four nodes and return the result. This is useful for debugging and to ensure that the nodes don't collide
+         Divide the Node into four nodes and put them in self.children
         """
         # This method is used to create a new node with the same shape as the node.
         if(len(self.bodies)>1):
@@ -61,11 +61,11 @@ class Node():
 
     def pointsIn(self,x,y,w):
         """
-         Returns a list of bodies in the rectangle defined by x y w. This is useful for debugging and to determine which bodies are part of the rectangle
+         Returns a list of bodies in the rectangle defined by x y w. This is useful to determine which bodies are part of the rectangle
          
-         @param x - x coordinate of the rectangle
+         @param x - x coordinate of the rectangle ( top left corner )
          @param y - y coordinate of the rectangle ( top left corner )
-         @param w - width of the rectangle ( width ). It must be greater than 0
+         @param w - width of the rectangle
          
          @return list of : class : ` Body `
         """
@@ -79,10 +79,10 @@ class Node():
     
     def isLeaf(self):
         """
-         Returns true if this node is a leaf. A leaf is a node with no children. This is used to determine if a node can be removed from the tree without losing information.
+         Returns true if this node is a leaf. A leaf is a node with no children
          
          
-         @return C { True } if this node is a leaf C { False } otherwise ( not an error )
+         @return C { True } if this node is a leaf C { False } otherwise
         """
         return self.children == []
     
@@ -104,9 +104,8 @@ class Node():
         """
         # Inserts the body of the tree.
         if not self.isLeaf():
-            # Inserts the body to the children of this node.
             for child in self.children:
-                # Inserts the body into the child if it does not already exist.
+                # Inserts the body into the child if it is the good one
                 if child.contains(body):
                     child.insert(body)
         else:
@@ -117,12 +116,10 @@ class Node():
     
     def removeEmptyLeaves(self):
         """
-         Remove leaves that have no bodies. This is useful for debugging and to ensure that a tree does not end up empty
+         Remove leaves that have no bodies
         """
         newChildren = []
-        # Add a leaf to the list of children.
         for child in self.children:
-            # Add a leaf to the list of children.
             if not child.isLeaf() or len(child.bodies) != 0:
                 newChildren.append(child)
                 child.removeEmptyLeaves()
@@ -130,10 +127,10 @@ class Node():
     
     def computeMass(self):
         """
-         Compute and return the mass of the node and its descendents. This is used to compute the center of mass of the body in the tree.
-         
-         
-         @return tuple ( mass center ) where mass is the mass of the node and center is the center of mass
+         Computes the center of mass and total mass of the node and its descendents. 
+
+        
+         @return tuple ( mass, center ) where mass is the mass of the node and center is the center of mass
         """
         # Compute mass and massCenter of the leaf.
         if self.isLeaf():
@@ -154,15 +151,15 @@ class Node():
     
     def computeForce(self,body, precision):
         """
-         Compute the force that would be applied to a body if it were to collide with the body.
+         Compute the force that would be applied to a body by the bodies in this node, by approximating 
          
          @param body - The body to compute the force for. It is assumed that the physics system has been built and is in the coordinate system of the body
          @param precision
+
+         @returns force - the force that the bodies in this node apply on the body in parameter with precision according to the precision parameter
         """
         #If we only have one body we calculate the force accordingly
-        # Calculate the force of the leaf.
         if self.isLeaf():
-            # Returns the number of bodies in the body.
             if self.bodies[0] == body:
                 return 0
             else:
@@ -177,7 +174,6 @@ class Node():
             #else we just calculate the force in all the children independently
             else:
                 force = 0
-                # Compute the force of the body of the body.
                 for child in self.children:
                     force += child.computeForce(body,precision)
                 return force
@@ -187,17 +183,16 @@ class Node():
         d = np.sqrt(a**2 + b**2)
 
         Vdir = np.array([a,b])
-        QuadTree.nbInteract += 1
+        QuadTreeBarnesHut.nbInteract += 1
         force = ((GlobVar.G * otherBody.mass * body.mass)/d**3)*Vdir
-        # print("Forc de", body, "par", otherBody,"=",force)
         return force
 
     def __str__(self):
         """
-         Returns a string representation of the node. Used for debugging. It is the same as __str__ but with more information.
+         Returns a string representation of the node. Used for debugging.
          
          
-         @return A string representation of the node in human readable form ( x y w body nenfants|child
+         @return A string representation of the node in human readable form ( x y w body nenfants|child )
         """
         res = ""
         res += "x = " + str(self.x0)
@@ -216,16 +211,14 @@ class Node():
                     res += "  |  " + lign + "\n"
         return res
 
-class QuadTree():
+class QuadTreeBarnesHut():
     nbInteract = 0
 
     def __init__(self, width, xShift, yShift, bodies=[]):
         """
          Initializes a quad tree. This is the top level node that is used to represent the quad tree.
          
-         @param width - width of the quad tree in pixels. It is the number of quads that will be created in the tree.
-         @param xShift - x - coordinate of the node's left edge.
-         @param yShift - y - coordinate of the node's top edge.
+         @param width - width of the quadtree
          @param bodies - list of : class : ` Body ` objects
         """
         self.xShift = xShift
@@ -241,9 +234,9 @@ class QuadTree():
 
     def quadInsert(self,realBody):
         """
-         Insert a real body into the quad. This is used to simulate an infinitely large body that is going to be moved to the bottom of the physics world
+         Insert a body into the quad
          
-         @param realBody - The real body to
+         @param realBody
         """
         self.realBodiesToFakeBodies[realBody] = Body(realBody.pos[0]+self.xShift, realBody.pos[1]+self.yShift, realBody.mass)
         self.bodies.append(self.realBodiesToFakeBodies[realBody])
@@ -257,25 +250,25 @@ class QuadTree():
 
     def computeMasses(self):
         """
-         Compute masses of the node. This is called by mass_computation. py and should be overridden
+         Compute masses of the node.
         """
         self.node0.computeMass()
     
     def computeForce(self, body, precision):
         """
-         Compute the force for the body. This is a wrapper around QuadTree. computeForce that clears the Interact flag before returning to the root node
+         Compute the force for the body. This is a wrapper around QuadTree.node0.computeForce
          
          @param body - Body to compute the force for
-         @param precision - Precision of the force ( 0 - 9 )
+         @param precision - Precision of the force
          
-         @return A list of floats representing the force in each direction ( m / s^2 / s^3
+         @return the force on this body depending on all the other particules, approximated depending on precision
         """
-        QuadTree.nbInteract = 0
+        QuadTreeBarnesHut.nbInteract = 0
         return self.node0.computeForce(self.realBodiesToFakeBodies[body], precision)
     
     def __str__(self):
         """
-         Returns a string representation of the node. This is useful for debugging purposes. The string representation can be parsed by : py : func : ` astropy. graph. Graph. from_string ` or
+         Returns a string representation of the node
          
          
          @return The string representation of the
@@ -283,9 +276,6 @@ class QuadTree():
         return str(self.node0)
 
     def afficher(self):
-        """
-         Affichage d'un bonne. @function { public } afficher @param { void }
-        """
         #quelques tests
         print("nombre de points : ", len(self.bodies) == 20)
         print(self.bodies[0].pos[0])

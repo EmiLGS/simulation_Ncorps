@@ -2,6 +2,8 @@ import cmath
 import numpy as np
 import random as random
 
+
+#Obsolete. Check QuadTreeFMM or QuadTreeBarnesHut depending on what you want
 class Point():
     def __init__(self,x,y):
         """
